@@ -245,11 +245,6 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         return this.getBlockState(x, y, z).getFluidState();
     }
 
-    /*@Override//Fixme:
-    public float getBrightness(Direction direction, boolean shaded) {
-        return this.world.getBrightness(direction, shaded);
-    }*/
-
     @Override
     public LightingProvider getLightingProvider() {
         return this.world.getLightingProvider();

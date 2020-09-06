@@ -35,6 +35,6 @@ public class FlatLightPipeline implements LightPipeline {
             Arrays.fill(out.lm, unpackLM(this.lightCache.get(pos)));
         }
 
-        Arrays.fill(out.br, 1.0f);//this.lightCache.getWorld().getBrightness(face, shade));//fixme:
+        Arrays.fill(out.br, 1.0f);
     }
 }
