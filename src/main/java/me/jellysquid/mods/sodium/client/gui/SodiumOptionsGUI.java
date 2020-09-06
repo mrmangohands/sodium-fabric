@@ -1,6 +1,9 @@
 package me.jellysquid.mods.sodium.client.gui;
 
-import me.jellysquid.mods.sodium.client.gui.options.*;
+import me.jellysquid.mods.sodium.client.gui.options.Option;
+import me.jellysquid.mods.sodium.client.gui.options.OptionFlag;
+import me.jellysquid.mods.sodium.client.gui.options.OptionGroup;
+import me.jellysquid.mods.sodium.client.gui.options.OptionPage;
 import me.jellysquid.mods.sodium.client.gui.options.control.Control;
 import me.jellysquid.mods.sodium.client.gui.options.control.ControlElement;
 import me.jellysquid.mods.sodium.client.gui.options.storage.OptionStorage;
@@ -11,8 +14,11 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.VideoOptionsScreen;
-import net.minecraft.client.util.TextFormat;
+import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -75,9 +81,12 @@ public class SodiumOptionsGUI extends Screen {
         this.rebuildGUIPages();
         this.rebuildGUIOptions();
 
-        this.undoButton = new FlatButtonWidget(new Dim2i(this.width - 211, this.height - 30, 65, 20), "Undo", this::undoChanges);
-        this.applyButton = new FlatButtonWidget(new Dim2i(this.width - 142, this.height - 30, 65, 20), "Apply", this::applyChanges);
-        this.closeButton = new FlatButtonWidget(new Dim2i(this.width - 73, this.height - 30, 65, 20), "Close", this::onClose);
+        this.undoButton = new FlatButtonWidget(new Dim2i(this.width - 211, this.height - 30, 65, 20),
+                I18n.translate("sodium.options.buttons.undo"), this::undoChanges);
+        this.applyButton = new FlatButtonWidget(new Dim2i(this.width - 142, this.height - 30, 65, 20),
+                I18n.translate("sodium.options.buttons.apply"), this::applyChanges);
+        this.closeButton = new FlatButtonWidget(new Dim2i(this.width - 73, this.height - 30, 65, 20),
+                I18n.translate("sodium.options.buttons.close"), this::onClose);
 
         this.children.add(this.undoButton);
         this.children.add(this.applyButton);
@@ -177,7 +186,6 @@ public class SodiumOptionsGUI extends Screen {
         return this.controls.stream();
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
     private void renderOptionTooltip(ControlElement<?> element) {
         Dim2i dim = element.getDimensions();
 
@@ -185,21 +193,19 @@ public class SodiumOptionsGUI extends Screen {
         int boxPadding = 3;
 
         int boxWidth = 200;
+        int textWidth = boxWidth - (textPadding * 2);
 
         int boxY = dim.getOriginY();
         int boxX = dim.getLimitX() + boxPadding;
 
         Option<?> option = element.getOption();
-        List<String> tooltip = new ArrayList<>(this.font.wrapStringToWidthAsList(option.getTooltip(), boxWidth - (textPadding * 2)));
 
-        OptionImpact impact = option.getImpact();
+        String title = new LiteralText(option.getName()).formatted(Formatting.GRAY).asFormattedString();
 
-        if (impact != null) {
-            tooltip.add("");
-            tooltip.add(TextFormat.GRAY + "Performance Impact: " + impact.toDisplayString());
-        }
+        List<String> text = new ArrayList<>(this.font.wrapStringToWidthAsList(title, textWidth));
+        text.addAll(this.font.wrapStringToWidthAsList(option.getTooltip().asFormattedString(), textWidth));
 
-        int boxHeight = (tooltip.size() * 12) + boxPadding;
+        int boxHeight = (text.size() * 12) + boxPadding;
         int boxYLimit = boxY + boxHeight;
         int boxYCutoff = this.height - 40;
 
@@ -210,8 +216,8 @@ public class SodiumOptionsGUI extends Screen {
 
         this.fillGradient(boxX, boxY, boxX + boxWidth, boxY + boxHeight, 0xE0000000, 0xE0000000);
 
-        for (int i = 0; i < tooltip.size(); i++) {
-            String str = tooltip.get(i);
+        for (int i = 0; i < text.size(); i++) {
+            String str = text.get(i);
 
             if (str.isEmpty()) {
                 continue;

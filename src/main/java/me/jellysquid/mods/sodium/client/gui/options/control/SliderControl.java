@@ -3,6 +3,7 @@ package me.jellysquid.mods.sodium.client.gui.options.control;
 import me.jellysquid.mods.sodium.client.gui.options.Option;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
 import net.minecraft.client.util.Rect2i;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.Validate;
 
@@ -36,6 +37,11 @@ public class SliderControl implements Control<Integer> {
         return this.option;
     }
 
+    @Override
+    public int getMaxWidth() {
+        return 130;
+    }
+
     private static class Button extends ControlElement<Integer> {
         private static final int THUMB_WIDTH = 2, TRACK_HEIGHT = 1;
 
@@ -65,13 +71,13 @@ public class SliderControl implements Control<Integer> {
             super.render(mouseX, mouseY, delta);
 
             if (this.option.isAvailable() && this.hovered) {
-                this.renderSlider(mouseX, mouseY, delta);
+                this.renderSlider();
             } else {
-                this.renderStandaloneValue(mouseX, mouseY, delta);
+                this.renderStandaloneValue();
             }
         }
 
-        private void renderStandaloneValue(int mouseX, int mouseY, float delta) {
+        private void renderStandaloneValue() {
             int sliderX = this.sliderBounds.getX();
             int sliderY = this.sliderBounds.getY();
             int sliderWidth = this.sliderBounds.getWidth();
@@ -83,7 +89,7 @@ public class SliderControl implements Control<Integer> {
             this.drawString(label, sliderX + sliderWidth - labelWidth, sliderY + (sliderHeight / 2) - 4, 0xFFFFFFFF);
         }
 
-        private void renderSlider(int mouseX, int mouseY, float delta) {
+        private void renderSlider() {
             int sliderX = this.sliderBounds.getX();
             int sliderY = this.sliderBounds.getY();
             int sliderWidth = this.sliderBounds.getWidth();

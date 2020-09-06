@@ -3,8 +3,11 @@ package me.jellysquid.mods.sodium.client.render.chunk.compile;
 import me.jellysquid.mods.sodium.client.gl.SodiumVertexFormats;
 import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.model.quad.ModelQuadEncoder;
-import me.jellysquid.mods.sodium.client.model.quad.ModelQuadSink;
 import me.jellysquid.mods.sodium.client.model.quad.ModelQuadViewMutable;
+import me.jellysquid.mods.sodium.client.model.quad.sink.ModelQuadSink;
+import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
+import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockLayer;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.GlAllocationUtils;
 
 import java.nio.ByteBuffer;
@@ -18,6 +21,11 @@ public class ChunkMeshBuilder implements ModelQuadSink {
      * The encoder used to serialize model quads into the specified vertex format for consumption by the graphics card.
      */
     private final ModelQuadEncoder encoder;
+
+    /**
+     * The collection of sprites used by the vertex data in this builder.
+     */
+    private ChunkRenderData.Builder renderData;
 
     /**
      * The size of each written quad in bytes. This is always 4 times the stride of the vertex format.
@@ -47,15 +55,26 @@ public class ChunkMeshBuilder implements ModelQuadSink {
     /**
      * The scale to be applied to all offsets and quads written into this mesh builder.
      */
-    private float scale;
+    private final float scale;
 
-    public ChunkMeshBuilder(GlVertexFormat<?> format, int initialSize) {
+    private final BlockLayer layer;
+
+    public ChunkMeshBuilder(GlVertexFormat<?> format, BlockLayer layer, int initialSize) {
         this.scale = 1.0f / 32.0f;
         this.stride = format.getStride() * 4;
         this.encoder = SodiumVertexFormats.getEncoder(format);
 
         this.buffer = GlAllocationUtils.allocateByteBuffer(initialSize);
         this.capacity = initialSize;
+        this.layer = layer;
+    }
+
+    public void begin(ChunkRenderData.Builder renderData) {
+        if (this.renderData != null) {
+            throw new IllegalStateException("Not finished building!");
+        }
+
+        this.renderData = renderData;
     }
 
     public void setOffset(int x, int y, int z) {
@@ -86,7 +105,13 @@ public class ChunkMeshBuilder implements ModelQuadSink {
         }
 
         // Write the quad to the backing buffer using the marked position from earlier
-        this.encoder.write(quad, this.buffer, position);
+        this.encoder.write(quad, this.buffer, position, this.layer.isMipped());
+
+        Sprite sprite = quad.getSprite();
+
+        if (sprite != null) {
+            this.renderData.addSprite(sprite);
+        }
     }
 
     private void grow(int len) {
@@ -118,6 +143,10 @@ public class ChunkMeshBuilder implements ModelQuadSink {
      * Ends the stream of written data and makes a copy of it to be passed around.
      */
     public void copyInto(ByteBuffer dst) {
+        if (this.renderData != null) {
+            throw new IllegalStateException("Not finished building");
+        }
+
         // Mark the slice of memory that needs to be copied
         this.buffer.position(0);
         this.buffer.limit(this.position);
@@ -134,5 +163,9 @@ public class ChunkMeshBuilder implements ModelQuadSink {
 
     public int getSize() {
         return this.position;
+    }
+
+    public void finish() {
+        this.renderData = null;
     }
 }

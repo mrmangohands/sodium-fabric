@@ -1,10 +1,10 @@
 package me.jellysquid.mods.sodium.client.model.light.smooth;
 
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
-import me.jellysquid.mods.sodium.client.model.light.QuadLightData;
-import me.jellysquid.mods.sodium.client.model.light.cache.LightDataCache;
-import me.jellysquid.mods.sodium.client.model.quad.ModelQuadFlags;
+import me.jellysquid.mods.sodium.client.model.light.data.LightDataAccess;
+import me.jellysquid.mods.sodium.client.model.light.data.QuadLightData;
 import me.jellysquid.mods.sodium.client.model.quad.ModelQuadView;
+import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFlags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -39,7 +39,7 @@ public class SmoothLightPipeline implements LightPipeline {
     /**
      * The cache which light data will be accessed from.
      */
-    private final LightDataCache lightCache;
+    private final LightDataAccess lightCache;
 
     /**
      * The cached face data for each side of a block, both inset and outset.
@@ -47,12 +47,17 @@ public class SmoothLightPipeline implements LightPipeline {
     private final AoFaceData[] cachedFaceData = new AoFaceData[6 * 2];
 
     /**
+     * The position at which the cached face data was taken at.
+     */
+    private long cachedPos = Long.MIN_VALUE;
+
+    /**
      * A temporary array for storing the intermediary results of weight data for non-aligned face blending.
      */
     private final float[] weights = new float[4];
 
-    public SmoothLightPipeline(LightDataCache lightCache) {
-        this.lightCache = lightCache;
+    public SmoothLightPipeline(LightDataAccess cache) {
+        this.lightCache = cache;
 
         for (int i = 0; i < this.cachedFaceData.length; i++) {
             this.cachedFaceData[i] = new AoFaceData();
@@ -60,14 +65,9 @@ public class SmoothLightPipeline implements LightPipeline {
     }
 
     @Override
-    public void reset() {
-        for (AoFaceData data : this.cachedFaceData) {
-            data.reset();
-        }
-    }
+    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face, boolean shade) {
+        this.updateCachedData(pos.asLong());
 
-    @Override
-    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face) {
         int flags = quad.getFlags();
 
         final AoNeighborInfo neighborInfo = AoNeighborInfo.get(face);
@@ -80,7 +80,18 @@ public class SmoothLightPipeline implements LightPipeline {
         } else {
             this.applyComplex(neighborInfo, quad, pos, face, out, flags);
         }
+
+        //this.applySidedBrightness(out, face, shade);//Fixme:
     }
+
+    /*private void applySidedBrightness(QuadLightData out, Direction face, boolean shade) {
+        float brightness = this.lightCache.getWorld().getBrightness(face, shade);
+        float[] br = out.br;
+
+        for (int i = 0; i < br.length; i++) {
+            br[i] *= brightness;
+        }
+    }*/
 
     private void applyComplex(AoNeighborInfo neighborInfo, ModelQuadView quad, BlockPos pos, Direction dir, QuadLightData out, int flags) {
         // If the model quad is aligned to the block face, use the corner blocks above this face
@@ -165,13 +176,23 @@ public class SmoothLightPipeline implements LightPipeline {
      * Returns the cached data for a given facing or calculates it if it hasn't been cached.
      */
     private AoFaceData getCachedFaceData(BlockPos pos, Direction face, boolean offset) {
-        AoFaceData data = this.cachedFaceData[face.ordinal() + (offset ? 6 : 0)];
+        AoFaceData data = this.cachedFaceData[offset ? face.ordinal() : face.ordinal() + 6];
 
         if (!data.hasLightData()) {
             data.initLightData(this.lightCache, pos, face, offset);
         }
 
         return data;
+    }
+
+    private void updateCachedData(long key) {
+        if (this.cachedPos != key) {
+            for (AoFaceData data : this.cachedFaceData) {
+                data.reset();
+            }
+
+            this.cachedPos = key;
+        }
     }
 
     /**

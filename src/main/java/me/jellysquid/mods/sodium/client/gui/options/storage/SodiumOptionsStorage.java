@@ -17,8 +17,9 @@ public class SodiumOptionsStorage implements OptionStorage<SodiumGameOptions> {
 
     @Override
     public void save() {
-        SodiumClientMod.logger().info("Flushed changes to Sodium configuration");
-
         this.options.writeChanges();
+        this.options.notifyListeners();
+
+        SodiumClientMod.logger().info("Flushed changes to Sodium configuration");
     }
 }

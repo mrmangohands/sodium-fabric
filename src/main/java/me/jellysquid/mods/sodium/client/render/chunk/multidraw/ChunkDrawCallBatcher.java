@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 /**
  * Provides a fixed-size buffer which can be used to batch chunk section draw calls.
  */
-public abstract class ChunkDrawCallBatcher extends BufferBuilder {
+public abstract class ChunkDrawCallBatcher extends StructBuffer {
     private static final int STRUCT_SIZE = 16;
 
     protected final int capacity;
@@ -22,7 +22,7 @@ public abstract class ChunkDrawCallBatcher extends BufferBuilder {
     }
 
     public static ChunkDrawCallBatcher create(int capacity) {
-        return USE_UNSAFE ? new UnsafeChunkDrawCallBatcher(capacity) : new NioChunkDrawCallBatcher(capacity);
+        return UnsafeUtil.isAvailable() ? new UnsafeChunkDrawCallBatcher(capacity) : new NioChunkDrawCallBatcher(capacity);
     }
 
     public abstract void addIndirectDrawCall(int first, int count, int baseInstance, int instanceCount);

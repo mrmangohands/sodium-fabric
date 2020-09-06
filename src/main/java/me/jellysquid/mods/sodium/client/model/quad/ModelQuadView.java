@@ -1,5 +1,6 @@
 package me.jellysquid.mods.sodium.client.model.quad;
 
+import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFlags;
 import net.minecraft.client.texture.Sprite;
 
 import java.nio.ByteBuffer;
@@ -52,6 +53,11 @@ public interface ModelQuadView {
      * @return The integer-encoded normal vector for the vertex at index {@param idx}
      */
     int getNormal(int idx);
+
+    /**
+     * @return The color index of this quad.
+     */
+    int getColorIndex();
 
     /**
      * Copies this quad's data into the specified buffer starting at the given position.

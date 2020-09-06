@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.2.7-SNAPSHOT'
+    id 'fabric-loom' version '0.4-SNAPSHOT'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -21,9 +21,6 @@ if (build_id != null) {
 }
 
 minecraft {
-}
-
-minecraft {
     refmapName = "mixins.sodium.refmap.json"
     accessWidener = file("src/main/resources/sodium.accesswidener")
 }
@@ -33,6 +30,10 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric Resource Loader for translations
+    /*modCompile "net.fabricmc.fabric-api:fabric-resource-loader-v0:${project.fabric_resource_loader_version}"
+    include "net.fabricmc.fabric-api:fabric-resource-loader-v0:${project.fabric_resource_loader_version}"*/
 }
 
 processResources {
@@ -46,6 +47,16 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude "fabric.mod.json"
+    }
+}
+
+if (project.use_third_party_mods) {
+    repositories {
+        maven { url = "https://jitpack.io" }
+    }
+
+    dependencies {
+
     }
 }
 

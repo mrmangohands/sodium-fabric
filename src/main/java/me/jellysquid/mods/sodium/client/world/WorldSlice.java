@@ -4,13 +4,14 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuilder;
 import me.jellysquid.mods.sodium.client.world.biome.BiomeCache;
 import me.jellysquid.mods.sodium.client.world.biome.BiomeCacheManager;
-import me.jellysquid.mods.sodium.client.world.biome.BiomeColorBlendCache;
+import me.jellysquid.mods.sodium.client.world.biome.BiomeColorCache;
 import me.jellysquid.mods.sodium.common.util.pool.ReusableObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.LightType;
@@ -73,14 +74,14 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     // The biome blend caches for each color resolver type
     // This map is always re-initialized, but the caches themselves are taken from an object pool
-    private final Map<ColorResolver, BiomeColorBlendCache> colorResolvers = new Reference2ObjectOpenHashMap<>();
+    private final Map<ColorResolver, BiomeColorCache> colorResolvers = new Reference2ObjectOpenHashMap<>();
 
     // The previously accessed and cached color resolver, used in conjunction with the cached color cache field
     private ColorResolver prevColorResolver;
 
     // The cached lookup result for the previously accessed color resolver to avoid excess hash table accesses
     // for vertex color blending
-    private BiomeColorBlendCache prevColorCache;
+    private BiomeColorCache prevColorCache;
 
     // The world this slice has copied data from, not thread-safe
     private World world;
@@ -244,6 +245,11 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         return this.getBlockState(x, y, z).getFluidState();
     }
 
+    /*@Override//Fixme:
+    public float getBrightness(Direction direction, boolean shaded) {
+        return this.world.getBrightness(direction, shaded);
+    }*/
+
     @Override
     public LightingProvider getLightingProvider() {
         return this.world.getLightingProvider();
@@ -260,7 +266,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     @Override
     public int getColor(BlockPos pos, ColorResolver resolver) {
-        BiomeColorBlendCache cache;
+        BiomeColorCache cache;
 
         if (this.prevColorResolver == resolver) {
             cache = this.prevColorCache;
@@ -268,7 +274,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
             cache = this.colorResolvers.get(resolver);
 
             if (cache == null) {
-                this.colorResolvers.put(resolver, cache = new BiomeColorBlendCache(resolver, this));
+                this.colorResolvers.put(resolver, cache = new BiomeColorCache(resolver, this));
             }
 
             this.prevColorResolver = resolver;
@@ -288,6 +294,16 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
             default:
                 return 0;
         }
+    }
+
+    @Override
+    public int getBaseLightLevel(BlockPos pos, int ambientDarkness) {
+        return 0;
+    }
+
+    @Override
+    public boolean isSkyVisible(BlockPos pos) {
+        return false;
     }
 
     private int getLightLevel(ChunkNibbleArray[] arrays, BlockPos pos) {

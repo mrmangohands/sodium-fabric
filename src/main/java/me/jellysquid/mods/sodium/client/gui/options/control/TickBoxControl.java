@@ -3,6 +3,7 @@ package me.jellysquid.mods.sodium.client.gui.options.control;
 import me.jellysquid.mods.sodium.client.gui.options.Option;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
 import net.minecraft.client.util.Rect2i;
+import net.minecraft.client.util.math.MatrixStack;
 
 public class TickBoxControl implements Control<Boolean> {
     private final Option<Boolean> option;
@@ -14,6 +15,11 @@ public class TickBoxControl implements Control<Boolean> {
     @Override
     public ControlElement<Boolean> createElement(Dim2i dim) {
         return new TickBoxControlElement(this.option, dim);
+    }
+
+    @Override
+    public int getMaxWidth() {
+        return 30;
     }
 
     @Override

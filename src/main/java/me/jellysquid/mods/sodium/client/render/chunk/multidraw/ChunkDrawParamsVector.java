@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
  * Provides a resizeable vector backed by native memory that can be used to build an array of chunk draw call
  * parameters.
  */
-public abstract class ChunkDrawParamsVector extends BufferBuilder {
+public abstract class ChunkDrawParamsVector extends StructBuffer {
     private static final int VEC4_SIZE = 16;
 
     protected int capacity;
@@ -22,14 +22,14 @@ public abstract class ChunkDrawParamsVector extends BufferBuilder {
     }
 
     public static ChunkDrawParamsVector create(int capacity) {
-        return USE_UNSAFE ? new UnsafeChunkDrawCallVector(capacity) : new NioChunkDrawCallVector(capacity);
+        return UnsafeUtil.isAvailable() ? new UnsafeChunkDrawCallVector(capacity) : new NioChunkDrawCallVector(capacity);
     }
 
     public abstract void pushChunkDrawParams(float x, float y, float z);
 
     protected void growBuffer() {
-        this.capacity = this.buffer.capacity() * 2;
-        this.buffer = MemoryUtil.memRealloc(this.buffer, this.capacity);
+        this.capacity = this.capacity * 2;
+        this.buffer = MemoryUtil.memRealloc(this.buffer, this.capacity * VEC4_SIZE);
     }
 
     public static class UnsafeChunkDrawCallVector extends ChunkDrawParamsVector {

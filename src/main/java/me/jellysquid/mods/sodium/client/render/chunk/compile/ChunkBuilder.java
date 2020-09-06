@@ -4,12 +4,12 @@ import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkGraphicsState;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
-import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPassManager;
 import me.jellysquid.mods.sodium.client.render.chunk.tasks.ChunkRenderBuildTask;
 import me.jellysquid.mods.sodium.client.render.chunk.tasks.ChunkRenderEmptyBuildTask;
 import me.jellysquid.mods.sodium.client.render.chunk.tasks.ChunkRenderRebuildTask;
-import me.jellysquid.mods.sodium.client.render.pipeline.ChunkRenderPipeline;
+import me.jellysquid.mods.sodium.client.render.pipeline.context.ChunkRenderContext;
 import me.jellysquid.mods.sodium.client.util.task.CancellationSource;
+import me.jellysquid.mods.sodium.client.world.ClientWorldExtended;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.client.world.biome.BiomeCacheManager;
 import me.jellysquid.mods.sodium.common.util.collections.DequeDrain;
@@ -31,6 +31,11 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ChunkBuilder<T extends ChunkGraphicsState> {
+    /**
+     * The maximum number of jobs that can be queued for a given worker thread.
+     */
+    private static final int TASK_QUEUE_LIMIT_PER_WORKER = 2;
+
     private static final Logger LOGGER = LogManager.getLogger("ChunkBuilder");
 
     private final Deque<WrappedTask<T>> buildQueue = new ConcurrentLinkedDeque<>();
@@ -46,7 +51,6 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
     private World world;
     private Vector3d cameraPosition;
     private BiomeCacheManager biomeCacheManager;
-    private BlockRenderPassManager renderPassManager;
 
     private final int limitThreads;
     private final GlVertexFormat<?> format;
@@ -64,7 +68,7 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
      * spawn more tasks than the budget allows, it will block until resources become available.
      */
     public int getSchedulingBudget() {
-        return Math.max(0, (this.limitThreads * 3) - this.buildQueue.size());
+        return Math.max(0, (this.limitThreads * TASK_QUEUE_LIMIT_PER_WORKER) - this.buildQueue.size());
     }
 
     /**
@@ -80,9 +84,11 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
             throw new IllegalStateException("Threads are still alive while in the STOPPED state");
         }
 
+        MinecraftClient client = MinecraftClient.getInstance();
+
         for (int i = 0; i < this.limitThreads; i++) {
-            ChunkBuildBuffers buffers = new ChunkBuildBuffers(this.format, this.renderPassManager);
-            ChunkRenderPipeline pipeline = new ChunkRenderPipeline(MinecraftClient.getInstance());
+            ChunkBuildBuffers buffers = new ChunkBuildBuffers(this.format);
+            ChunkRenderContext pipeline = new ChunkRenderContext(client);
 
             WorkerRunnable worker = new WorkerRunnable(buffers, pipeline);
 
@@ -150,7 +156,7 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
             return false;
         }
 
-        this.backend.upload(new DequeDrain<>(this.uploadQueue));
+        this.backend.uploadChunks(new DequeDrain<>(this.uploadQueue));
 
         return true;
     }
@@ -197,9 +203,8 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
      * a world teleportation event), the worker threads will first be stopped and all pending tasks will be discarded
      * before being started again.
      * @param world The world instance
-     * @param renderPassManager The render pass manager used for the world
      */
-    public void init(ClientWorld world, BlockRenderPassManager renderPassManager) {
+    public void init(ClientWorld world) {
         if (world == null) {
             throw new NullPointerException("World is null");
         }
@@ -207,8 +212,7 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
         this.stopWorkers();
 
         this.world = world;
-        this.renderPassManager = renderPassManager;
-        this.biomeCacheManager = new BiomeCacheManager(world.getDimension().getType().getBiomeAccessType(), world.getSeed());
+        this.biomeCacheManager = new BiomeCacheManager(world.getDimension().getType().getBiomeAccessType(), ((ClientWorldExtended) world).getBiomeSeed());
 
         this.startWorkers();
     }
@@ -305,7 +309,7 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
         if (slice == null) {
             return new ChunkRenderEmptyBuildTask<>(render);
         } else {
-            return new ChunkRenderRebuildTask<>(this, render, slice, render.getRenderOrigin());
+            return new ChunkRenderRebuildTask<>(this, this.backend, render, slice);
         }
     }
 
@@ -317,9 +321,9 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
 
         // Making this thread-local provides a small boost to performance by avoiding the overhead in synchronizing
         // caches between different CPU cores
-        private final ChunkRenderPipeline pipeline;
+        private final ChunkRenderContext pipeline;
 
-        public WorkerRunnable(ChunkBuildBuffers bufferCache, ChunkRenderPipeline pipeline) {
+        public WorkerRunnable(ChunkBuildBuffers bufferCache, ChunkRenderContext pipeline) {
             this.bufferCache = bufferCache;
             this.pipeline = pipeline;
         }

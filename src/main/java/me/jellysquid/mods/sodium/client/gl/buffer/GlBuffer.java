@@ -2,7 +2,6 @@ package me.jellysquid.mods.sodium.client.gl.buffer;
 
 import me.jellysquid.mods.sodium.client.gl.GlObject;
 import me.jellysquid.mods.sodium.client.gl.func.GlFunctions;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL31;
 
@@ -10,6 +9,7 @@ import java.nio.ByteBuffer;
 
 public abstract class GlBuffer extends GlObject {
     protected int vertexCount = 0;
+    protected int size;
 
     protected GlBuffer() {
         this.setHandle(GL15.glGenBuffers());
@@ -23,17 +23,9 @@ public abstract class GlBuffer extends GlObject {
         GL15.glBindBuffer(target, this.handle());
     }
 
-    public void drawArrays(int mode) {
-        this.drawArrays(mode, 0, this.vertexCount);
-    }
-
-    public void drawArrays(int mode, int first, int count) {
-        GL11.glDrawArrays(mode, first, count);
-    }
-
     public abstract void upload(int target, ByteBuffer buf);
 
-    public abstract void allocate(int target, long size);
+    public abstract void allocate(int target, int size);
 
     public void upload(int target, VertexData data) {
         this.vertexCount = data.buffer.remaining() / data.format.getStride();
@@ -45,10 +37,7 @@ public abstract class GlBuffer extends GlObject {
         GL15.glDeleteBuffers(this.handle());
 
         this.invalidateHandle();
-    }
-
-    public void uploadSub(int target, int offset, ByteBuffer data) {
-        GL15.glBufferSubData(target, offset, data);
+        this.size = 0;
     }
 
     public static void copy(GlBuffer src, GlBuffer dst, int readOffset, int writeOffset, int copyLen, int bufferSize) {
@@ -61,5 +50,9 @@ public abstract class GlBuffer extends GlObject {
 
         dst.unbind(GL31.GL_COPY_WRITE_BUFFER);
         src.unbind(GL31.GL_COPY_READ_BUFFER);
+    }
+
+    public int getSize() {
+        return this.size;
     }
 }

@@ -8,17 +8,20 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gl.SodiumVertexFormats;
 import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
+import me.jellysquid.mods.sodium.client.gl.util.GlFogHelper;
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderManager;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl20.GL20ChunkRenderBackend;
-import me.jellysquid.mods.sodium.client.render.chunk.backends.gl30.GL30ChunkRenderBackend;
+import me.jellysquid.mods.sodium.client.render.chunk.backends.gl33.GL33ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl43.GL43ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
-import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPassManager;
+import me.jellysquid.mods.sodium.client.render.chunk.passes.WorldRenderPhase;
+import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import me.jellysquid.mods.sodium.client.world.ChunkStatusListener;
 import me.jellysquid.mods.sodium.client.world.ChunkStatusListenerManager;
+import me.jellysquid.mods.sodium.common.util.ListUtil;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -31,7 +34,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.*;
 import net.minecraft.util.profiler.Profiler;
 
-import java.util.Collection;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -46,9 +48,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     private ClientWorld world;
     private int renderDistance;
 
-    private double lastTranslucentSortX, lastTranslucentSortY, lastTranslucentSortZ;
     private double lastCameraX, lastCameraY, lastCameraZ;
-
     private double lastCameraPitch, lastCameraYaw;
 
     private boolean useEntityCulling;
@@ -58,7 +58,6 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
     private Frustum frustum;
     private ChunkRenderManager<?> chunkRenderManager;
-    private BlockRenderPassManager renderPassManager;
     private ChunkRenderBackend<?> chunkRenderBackend;
 
     /**
@@ -142,7 +141,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     public void updateChunks(Camera camera, Frustum frustum, boolean hasForcedFrustum, int frame, boolean spectator) {
         this.frustum = frustum;
 
-        this.useEntityCulling = SodiumClientMod.options().performance.useAdvancedEntityCulling;
+        this.useEntityCulling = SodiumClientMod.options().advanced.useAdvancedEntityCulling;
 
         if (this.client.options.viewDistance != this.renderDistance) {
             this.reload();
@@ -196,22 +195,30 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         Entity.setRenderDistanceMultiplier(MathHelper.clamp((double) this.client.options.viewDistance / 8.0D, 1.0D, 2.5D));
     }
 
+
+    public void drawChunkLayers(WorldRenderPhase phase, MatrixStack matrixStack, double x, double y, double z) {
+        for (BlockRenderPass pass : this.chunkRenderBackend.getRenderPassManager().getPassesForPhase(phase)) {
+            this.drawChunkLayer(pass, matrixStack, x, y, z);
+        }
+    }
+
     /**
      * Performs a render pass for the given {@link RenderLayer} and draws all visible chunks for it.
      */
-    public void drawChunkLayer(RenderLayer renderLayer, MatrixStack matrixStack, double x, double y, double z) {
-        BlockRenderPass pass = this.renderPassManager.getRenderPassForLayer(renderLayer);
-        pass.startDrawing();
+    public void drawChunkLayer(BlockRenderPass pass, MatrixStack matrixStack, double x, double y, double z) {
+        pass.beginRender();
 
-        this.chunkRenderManager.renderLayer(matrixStack, pass, x, y, z);
+        // We don't have a great way to check if underwater fog is being used, so assume that terrain will only ever
+        // use linear fog. This will not disable fog in the Nether.
+        if (!SodiumClientMod.options().quality.enableFog && GlFogHelper.isFogLinear()) {
+            RenderSystem.disableFog();
+        }
 
-        pass.endDrawing();
+        this.chunkRenderManager.renderChunks(matrixStack, pass, x, y, z);
+
+        pass.endRender();
 
         RenderSystem.clearCurrentColor();
-    }
-
-    public void renderChunkDebugInfo(Camera camera) {
-        // TODO: re-implement
     }
 
     public void reload() {
@@ -237,36 +244,36 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
 
         SodiumGameOptions opts = SodiumClientMod.options();
 
-        this.renderPassManager = BlockRenderPassManager.createDefaultMappings();
-
         final GlVertexFormat<SodiumVertexFormats.ChunkMeshAttribute> vertexFormat;
 
-        if (opts.performance.useCompactVertexFormat) {
+        if (opts.advanced.useCompactVertexFormat) {
             vertexFormat = SodiumVertexFormats.CHUNK_MESH_COMPACT;
         } else {
             vertexFormat = SodiumVertexFormats.CHUNK_MESH_FULL;
         }
 
-        this.chunkRenderBackend = createChunkRenderBackend(opts.performance.chunkRendererBackend, vertexFormat);
+        this.chunkRenderBackend = createChunkRenderBackend(opts.advanced.chunkRendererBackend, vertexFormat);
         this.chunkRenderBackend.createShaders();
 
-        this.chunkRenderManager = new ChunkRenderManager<>(this, this.chunkRenderBackend, this.renderPassManager, this.world, this.renderDistance);
+        this.chunkRenderManager = new ChunkRenderManager<>(this, this.chunkRenderBackend, this.world, this.renderDistance);
         this.chunkRenderManager.restoreChunks(this.loadedChunkPositions);
     }
 
     private static ChunkRenderBackend<?> createChunkRenderBackend(SodiumGameOptions.ChunkRendererBackendOption opt,
                                                            GlVertexFormat<SodiumVertexFormats.ChunkMeshAttribute> vertexFormat) {
+        boolean disableBlacklist = SodiumClientMod.options().advanced.disableDriverBlacklist;
+
         switch (opt) {
             case GL43:
-                if (GL43ChunkRenderBackend.isSupported()) {
+                if (GL43ChunkRenderBackend.isSupported(disableBlacklist)) {
                     return new GL43ChunkRenderBackend(vertexFormat);
                 }
-            case GL30:
-                if (GL30ChunkRenderBackend.isSupported()) {
-                    return new GL30ChunkRenderBackend(vertexFormat);
+            case GL33:
+                if (GL33ChunkRenderBackend.isSupported(disableBlacklist)) {
+                    return new GL33ChunkRenderBackend(vertexFormat);
                 }
             case GL20:
-                if (GL20ChunkRenderBackend.isSupported()) {
+                if (GL20ChunkRenderBackend.isSupported(disableBlacklist)) {
                     return new GL20ChunkRenderBackend(vertexFormat);
                 }
             default:
@@ -296,7 +303,8 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
                 int stage = breakingInfos.last().getStage();
 
                 if (stage >= 0) {
-                    VertexConsumer transformer = new TransformingVertexConsumer(bufferBuilders.getEffectVertexConsumers().getBuffer(ModelLoader.BLOCK_DESTRUCTION_RENDER_LAYERS.get(stage)), matrices.peek());
+                    MatrixStack.Entry entry = matrices.peek();
+                    VertexConsumer transformer = new TransformingVertexConsumer(bufferBuilders.getEffectVertexConsumers().getBuffer(ModelLoader.BLOCK_DESTRUCTION_RENDER_LAYERS.get(stage)), entry);
                     consumer = (layer) -> layer.method_23037() ? VertexConsumers.dual(transformer, immediate.getBuffer(layer)) : immediate.getBuffer(layer);
                 }
             }
@@ -331,17 +339,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
     }
 
     public void onChunkRenderUpdated(ChunkRenderData meshBefore, ChunkRenderData meshAfter) {
-        Collection<BlockEntity> entitiesBefore = meshBefore.getGlobalBlockEntities();
-
-        if (!entitiesBefore.isEmpty()) {
-            this.globalBlockEntities.removeAll(entitiesBefore);
-        }
-
-        Collection<BlockEntity> entitiesAfter = meshAfter.getGlobalBlockEntities();
-
-        if (!entitiesAfter.isEmpty()) {
-            this.globalBlockEntities.addAll(entitiesAfter);
-        }
+        ListUtil.updateList(this.globalBlockEntities, meshBefore.getGlobalBlockEntities(), meshAfter.getGlobalBlockEntities());
     }
 
     /**
@@ -354,6 +352,12 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         }
 
         Box box = entity.getVisibilityBoundingBox();
+
+        // Entities outside the valid world height will never map to a rendered chunk
+        // Always render these entities or they'll be culled incorrectly!
+        if (box.y2 < 0.5D || box.y1 > 255.5D) {
+            return true;
+        }
 
         int minX = MathHelper.floor(box.x1 - 0.5D) >> 4;
         int minY = MathHelper.floor(box.y1 - 0.5D) >> 4;
@@ -393,15 +397,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
      * Schedules chunk rebuilds for all chunks in the specified block region.
      */
     public void scheduleRebuildForBlockArea(int minX, int minY, int minZ, int maxX, int maxY, int maxZ, boolean important) {
-        int minChunkX = minX >> 4;
-        int minChunkY = minY >> 4;
-        int minChunkZ = minZ >> 4;
-
-        int maxChunkX = maxX >> 4;
-        int maxChunkY = maxY >> 4;
-        int maxChunkZ = maxZ >> 4;
-
-        this.scheduleRebuildForChunks(minChunkX, minChunkY, minChunkZ, maxChunkX, maxChunkY, maxChunkZ, important);
+        this.scheduleRebuildForChunks(minX >> 4, minY >> 4, minZ >> 4, maxX >> 4, maxY >> 4, maxZ >> 4, important);
     }
 
     /**
@@ -422,5 +418,9 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
      */
     public void scheduleRebuildForChunk(int x, int y, int z, boolean important) {
         this.chunkRenderManager.scheduleRebuild(x, y, z, important);
+    }
+
+    public ChunkRenderBackend<?> getChunkRenderer() {
+        return this.chunkRenderBackend;
     }
 }

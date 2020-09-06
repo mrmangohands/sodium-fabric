@@ -2,25 +2,25 @@ package me.jellysquid.mods.sodium.client.render.chunk.shader;
 
 import com.google.common.collect.ImmutableList;
 import me.jellysquid.mods.sodium.client.gl.shader.ShaderConstants;
+import me.jellysquid.mods.sodium.client.gl.util.GlFogHelper;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
-import java.util.function.Function;
 
 public enum ChunkFogMode {
     NONE(ChunkShaderFogComponent.None::new, ImmutableList.of()),
     LINEAR(ChunkShaderFogComponent.Linear::new, ImmutableList.of("USE_FOG", "USE_FOG_LINEAR")),
     EXP2(ChunkShaderFogComponent.Exp2::new, ImmutableList.of("USE_FOG", "USE_FOG_EXP2"));
 
-    private final Function<ChunkProgram, ChunkShaderFogComponent> factory;
+    private final ShaderComponent.Factory<ChunkShaderFogComponent, ChunkProgram> factory;
     private final List<String> defines;
 
-    ChunkFogMode(Function<ChunkProgram, ChunkShaderFogComponent> factory, List<String> defines) {
+    ChunkFogMode(ShaderComponent.Factory<ChunkShaderFogComponent, ChunkProgram> factory, List<String> defines) {
         this.factory = factory;
         this.defines = defines;
     }
 
-    public Function<ChunkProgram, ChunkShaderFogComponent> getFactory() {
+    public ShaderComponent.Factory<ChunkShaderFogComponent, ChunkProgram> getFactory() {
         return this.factory;
     }
 
@@ -32,7 +32,7 @@ public enum ChunkFogMode {
      * Retrieves the current fog mode from the fixed-function pipeline.
      */
     public static ChunkFogMode getActiveMode() {
-        if (!GL11.glGetBoolean(GL11.GL_FOG)) {
+        if (!GlFogHelper.isFogEnabled()) {
             return ChunkFogMode.NONE;
         }
 

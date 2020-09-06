@@ -3,10 +3,12 @@ package me.jellysquid.mods.sodium.client.gui;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gui.options.TextProvider;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl20.GL20ChunkRenderBackend;
-import me.jellysquid.mods.sodium.client.render.chunk.backends.gl30.GL30ChunkRenderBackend;
+import me.jellysquid.mods.sodium.client.render.chunk.backends.gl33.GL33ChunkRenderBackend;
 import me.jellysquid.mods.sodium.client.render.chunk.backends.gl43.GL43ChunkRenderBackend;
+import net.minecraft.client.resource.language.I18n;
 
 import java.io.File;
 import java.io.FileReader;
@@ -14,49 +16,52 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.function.BooleanSupplier;
 import java.util.stream.Stream;
 
 public class SodiumGameOptions {
     public final QualitySettings quality = new QualitySettings();
-    public final PerformanceSettings performance = new PerformanceSettings();
+    public final AdvancedSettings advanced = new AdvancedSettings();
 
     private File file;
 
-    public static class PerformanceSettings {
+    public void notifyListeners() {
+        SodiumClientMod.onConfigChanged(this);
+    }
+
+    public static class AdvancedSettings {
         public ChunkRendererBackendOption chunkRendererBackend = ChunkRendererBackendOption.BEST;
         public boolean animateOnlyVisibleTextures = true;
         public boolean useAdvancedEntityCulling = true;
         public boolean useParticleCulling = true;
         public boolean useFogOcclusion = true;
         public boolean useCompactVertexFormat = true;
-        public boolean useAggressiveChunkCulling = true;
+        public boolean useChunkFaceCulling = true;
+        public boolean useMemoryIntrinsics = true;
+        public boolean disableDriverBlacklist = false;
     }
 
     public static class QualitySettings {
         public GraphicsQuality cloudQuality = GraphicsQuality.DEFAULT;
         public GraphicsQuality weatherQuality = GraphicsQuality.DEFAULT;
 
-        public MipmapQuality mipmapQuality = MipmapQuality.NEAREST;
-
         public boolean enableVignette = true;
+        public boolean enableFog = true;
         public boolean enableClouds = true;
 
         public LightingQuality smoothLighting = LightingQuality.HIGH;
-        public int biomeBlendDistance = 3;
     }
 
     public enum ChunkRendererBackendOption implements TextProvider {
-        GL43("OpenGL 4.3", GL43ChunkRenderBackend::isSupported),
-        GL30("OpenGL 3.0", GL30ChunkRenderBackend::isSupported),
-        GL20("OpenGL 2.0", GL20ChunkRenderBackend::isSupported);
+        GL43("Multidraw (GL 4.3)", GL43ChunkRenderBackend::isSupported),
+        GL33("Oneshot (GL 3.3)", GL33ChunkRenderBackend::isSupported),
+        GL20("Oneshot (GL 2.0)", GL20ChunkRenderBackend::isSupported);
 
         public static final ChunkRendererBackendOption BEST = pickBestBackend();
 
         private final String name;
-        private final BooleanSupplier supportedFunc;
+        private final SupportCheck supportedFunc;
 
-        ChunkRendererBackendOption(String name, BooleanSupplier supportedFunc) {
+        ChunkRendererBackendOption(String name, SupportCheck supportedFunc) {
             this.name = name;
             this.supportedFunc = supportedFunc;
         }
@@ -66,24 +71,28 @@ public class SodiumGameOptions {
             return this.name;
         }
 
-        public boolean isSupported() {
-            return this.supportedFunc.getAsBoolean();
+        public boolean isSupported(boolean disableBlacklist) {
+            return this.supportedFunc.isSupported(disableBlacklist);
         }
 
-        public static ChunkRendererBackendOption[] getAvailableOptions() {
-            return streamAvailableOptions()
+        public static ChunkRendererBackendOption[] getAvailableOptions(boolean disableBlacklist) {
+            return streamAvailableOptions(disableBlacklist)
                     .toArray(ChunkRendererBackendOption[]::new);
         }
 
-        public static Stream<ChunkRendererBackendOption> streamAvailableOptions() {
+        public static Stream<ChunkRendererBackendOption> streamAvailableOptions(boolean disableBlacklist) {
             return Arrays.stream(ChunkRendererBackendOption.values())
-                    .filter(ChunkRendererBackendOption::isSupported);
+                    .filter((o) -> o.isSupported(disableBlacklist));
         }
 
         private static ChunkRendererBackendOption pickBestBackend() {
-            return streamAvailableOptions()
+            return streamAvailableOptions(false)
                     .findFirst()
                     .orElseThrow(IllegalStateException::new);
+        }
+
+        private interface SupportCheck {
+            boolean isSupported(boolean disableBlacklist);
         }
     }
 
@@ -104,9 +113,9 @@ public class SodiumGameOptions {
     }
 
     public enum GraphicsQuality implements TextProvider {
-        DEFAULT("Default"),
-        FAST("Fast"),
-        FANCY("Fancy");
+        DEFAULT("generator.default"),
+        FANCY("options.clouds.fancy"),
+        FAST("options.clouds.fast");
 
         private final String name;
 
@@ -116,7 +125,7 @@ public class SodiumGameOptions {
 
         @Override
         public String getLocalizedName() {
-            return this.name;
+            return I18n.translate(this.name);
         }
 
         public boolean isFancy() {
@@ -128,28 +137,10 @@ public class SodiumGameOptions {
         }
     }
 
-    public enum MipmapQuality implements TextProvider {
-        NEAREST("Nearest"),
-        LINEAR("Linear"),
-        BI_LINEAR("Bi-Linear"),
-        TRI_LINEAR("Tri-Linear");
-
-        private final String name;
-
-        MipmapQuality(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getLocalizedName() {
-            return this.name;
-        }
-    }
-
     public enum LightingQuality implements TextProvider {
-        OFF("Off"),
+        HIGH("High"),
         LOW("Low"),
-        HIGH("High");
+        OFF("Off");
 
         private final String name;
 
@@ -191,8 +182,8 @@ public class SodiumGameOptions {
     }
 
     private void sanitize() {
-        if (this.performance.chunkRendererBackend == null) {
-            this.performance.chunkRendererBackend = ChunkRendererBackendOption.BEST;
+        if (this.advanced.chunkRendererBackend == null) {
+            this.advanced.chunkRendererBackend = ChunkRendererBackendOption.BEST;
         }
     }
 

@@ -3,6 +3,7 @@ package me.jellysquid.mods.sodium.client.gui.options.control;
 import me.jellysquid.mods.sodium.client.gui.options.Option;
 import me.jellysquid.mods.sodium.client.gui.options.TextProvider;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
+import net.minecraft.client.util.math.MatrixStack;
 import org.apache.commons.lang3.Validate;
 
 public class CyclingControl<T extends Enum<T>> implements Control<T> {
@@ -54,6 +55,11 @@ public class CyclingControl<T extends Enum<T>> implements Control<T> {
     @Override
     public ControlElement<T> createElement(Dim2i dim) {
         return new CyclingControlElement<>(this.option, dim, this.allowedValues, this.names);
+    }
+
+    @Override
+    public int getMaxWidth() {
+        return 70;
     }
 
     private static class CyclingControlElement<T extends Enum<T>> extends ControlElement<T> {

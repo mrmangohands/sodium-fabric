@@ -1,11 +1,11 @@
 package me.jellysquid.mods.sodium.client.render.chunk;
 
-import me.jellysquid.mods.sodium.client.model.quad.ModelQuadFacing;
-import me.jellysquid.mods.sodium.client.render.FrustumExtended;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
+import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderBounds;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.texture.SpriteUtil;
+import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.BlockPos;
@@ -34,12 +34,10 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
     private Direction direction;
     private int visibleFrame = -1;
     private byte cullingState;
-    private byte visibleFaces;
     private long visibilityData;
 
     private final ChunkRenderContainer<T>[] adjacent;
     private boolean tickable;
-    private boolean hasAnyGraphicsState;
 
     public ChunkRenderContainer(ChunkRenderBackend<T> backend, SodiumWorldRenderer worldRenderer, int chunkX, int chunkY, int chunkZ) {
         this.worldRenderer = worldRenderer;
@@ -52,7 +50,7 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
         this.adjacent = new ChunkRenderContainer[DirectionUtil.DIRECTION_COUNT];
 
         //noinspection unchecked
-        this.graphicsStates = (T[]) Array.newInstance(backend.getGraphicsStateType(), BlockRenderPass.COUNT);
+        this.graphicsStates = (T[]) Array.newInstance(backend.getGraphicsStateType(), backend.getRenderPassManager().getPassCount());
     }
 
     /**
@@ -123,18 +121,19 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
             throw new NullPointerException("Mesh information must not be null");
         }
 
-        this.data = info;
         this.visibilityData = 0;
 
         for (Direction from : DirectionUtil.ALL_DIRECTIONS) {
             for (Direction to : DirectionUtil.ALL_DIRECTIONS) {
-                if (this.data.isVisibleThrough(from, to)) {
+                if (info.isVisibleThrough(from, to)) {
                     this.visibilityData |= (1L << ((from.ordinal() << 3) + to.ordinal()));
                 }
             }
         }
 
         this.worldRenderer.onChunkRenderUpdated(this.data, info);
+        this.data = info;
+
         this.tickable = !info.getAnimatedSprites().isEmpty();
     }
 
@@ -142,10 +141,15 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
      * Marks this render as needing an update. Important updates are scheduled as "blocking" and will prevent the next
      * frame from being rendered until the update is performed.
      * @param important True if the update is blocking, otherwise false
+     * @return
      */
-    public void scheduleRebuild(boolean important) {
+    public boolean scheduleRebuild(boolean important) {
+        boolean changed = !this.needsRebuild || (!this.needsImportantRebuild && important);
+
         this.needsImportantRebuild = important;
         this.needsRebuild = true;
+
+        return changed;
     }
 
     /**
@@ -389,21 +393,8 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
         return this.chunkZ;
     }
 
-    public void resetVisibleFaces() {
-        this.visibleFaces = (byte) (1 << ModelQuadFacing.NONE.ordinal());
-    }
-
-    public void markFaceVisible(ModelQuadFacing facing) {
-        this.visibleFaces |= (byte) (1 << facing.ordinal());
-    }
-
-
     public ChunkRenderBounds getBounds() {
         return this.data.getBounds();
-    }
-
-    public void markAllFacesVisible() {
-        this.visibleFaces = 0b1111111;
     }
 
     public T getGraphicsState(BlockRenderPass pass) {
@@ -414,7 +405,7 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
         return this.tickable;
     }
 
-    public boolean hasAnyGraphicsState() {
-        return this.hasAnyGraphicsState;
+    public int getFacesWithData() {
+        return this.data.getFacesWithData();
     }
 }
