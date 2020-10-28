@@ -20,7 +20,6 @@
     "features.buffer_builder.fast_advance.MixinBufferBuilder",
     "features.buffer_builder.fast_sort.MixinBufferBuilder",
     "features.buffer_builder.intrinsics.MixinBufferBuilder",
-    "features.buffer_builder.intrinsics.MixinSpriteTexturedVertexConsumer",
     "features.chunk_rendering.MixinChunkBuilder",
     "features.chunk_rendering.MixinClientWorld",
     "features.chunk_rendering.MixinLightmapTextureManager",
@@ -28,7 +27,6 @@
     "features.debug.MixinDebugHud",
     "features.entity.fast_render.MixinCuboid",
     "features.entity.fast_render.MixinModelPart",
-    "features.entity.shadow_clipping.MixinEntityRenderDispatcher",
     "features.entity.smooth_lighting.MixinEntityRenderer",
     "features.gui.MixinDebugHud",
     "features.gui.font.MixinGlyphRenderer",
@@ -45,7 +43,6 @@
     "features.particle.fast_render.MixinBillboardParticle",
     "features.render_layer.MixinRenderLayers",
     "features.texture_tracking.MixinSprite",
-    "features.texture_tracking.MixinSpriteIdentifier",
     "features.world_ticking.MixinClientWorld"
   ]
 }

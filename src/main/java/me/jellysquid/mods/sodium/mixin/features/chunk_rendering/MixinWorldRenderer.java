@@ -90,7 +90,7 @@ public abstract class MixinWorldRenderer {
      * @author JellySquid
      */
     @Overwrite
-    private void setupTerrain(Camera camera, Frustum frustum, boolean hasForcedFrustum, int frame, boolean spectator) {
+    private void setUpTerrain(Camera camera, Frustum frustum, boolean hasForcedFrustum, int frame, boolean spectator) {
         this.renderer.updateChunks(camera, frustum, hasForcedFrustum, frame, spectator);
     }
 
@@ -135,7 +135,7 @@ public abstract class MixinWorldRenderer {
         this.renderer.reload();
     }
 
-    @Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/WorldRenderer;noCullingBlockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
+    @Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/WorldRenderer;blockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     private void onRenderTileEntities(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, CallbackInfo ci) {
         this.renderer.renderTileEntities(matrices, this.bufferBuilders, this.blockBreakingProgressions, camera, tickDelta);
     }

@@ -246,7 +246,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         this.cameraZ = camera.getPos().z;
 
         this.lastFrameUpdated = frame;
-        this.useOcclusionCulling = MinecraftClient.getInstance().chunkCullingEnabled;
+        this.useOcclusionCulling = true;/*MinecraftClient.getInstance().chunkCullingEnabled*/;
         this.useAggressiveCulling = SodiumClientMod.options().advanced.useChunkFaceCulling;
 
         this.resetGraph();

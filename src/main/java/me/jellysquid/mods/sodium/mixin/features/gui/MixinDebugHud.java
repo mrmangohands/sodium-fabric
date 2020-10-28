@@ -6,8 +6,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.Matrix4f;
-import net.minecraft.client.util.math.MatrixStack;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;

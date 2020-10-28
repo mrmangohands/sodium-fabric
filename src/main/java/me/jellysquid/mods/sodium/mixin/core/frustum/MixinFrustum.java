@@ -31,7 +31,7 @@ public class MixinFrustum implements FrustumExtended {
     @Inject(method = "transform", at = @At("HEAD"))
     private void transform(Matrix4f mat, int x, int y, int z, int index, CallbackInfo ci) {
         Vector4f vec = new Vector4f((float) x, (float) y, (float) z, 1.0F);
-        vec.transform(mat);
+        vec.multiply(mat);
         vec.normalize();
 
         switch (index) {

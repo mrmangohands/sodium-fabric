@@ -1,6 +1,5 @@
 package me.jellysquid.mods.sodium.mixin.features.texture_tracking;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.render.texture.SpriteExtended;
 import net.minecraft.client.resource.metadata.AnimationResourceMetadata;
@@ -30,9 +29,9 @@ public abstract class MixinSprite implements SpriteExtended {
     @Shadow
     protected abstract void upload(int int_1);
 
-    @Shadow
+    /*@Shadow
     @Final
-    private Sprite.Interpolation interpolation;
+    private Sprite.Interpolation interpolation;*/
 
     /**
      * @author JellySquid
@@ -62,13 +61,13 @@ public abstract class MixinSprite implements SpriteExtended {
             if (prevFrameIndex != frameIndex && frameIndex >= 0 && frameIndex < this.getFrameCount()) {
                 this.upload(frameIndex);
             }
-        } else if (this.interpolation != null) {
+        }/* else if (this.interpolation != null) {
             if (!RenderSystem.isOnRenderThread()) {
                 RenderSystem.recordRenderCall(this::updateInterpolatedTexture);
             } else {
                 this.updateInterpolatedTexture();
             }
-        }
+        }*/
 
         this.forceNextUpdate = false;
     }
@@ -78,7 +77,7 @@ public abstract class MixinSprite implements SpriteExtended {
         this.forceNextUpdate = true;
     }
 
-    private void updateInterpolatedTexture() {
+    /*private void updateInterpolatedTexture() {
         this.interpolation.method_24128();
-    }
+    }*/
 }

@@ -23,6 +23,7 @@ import net.minecraft.client.color.world.BiomeColors;
 import net.minecraft.client.render.block.BlockModels;
 import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.tag.FluidTags;
@@ -58,12 +59,15 @@ public class FluidRenderer {
         BlockModels models = client.getBakedModelManager().getBlockModels();
 
         this.lavaSprites[0] = models.getModel(Blocks.LAVA.getDefaultState()).getSprite();
-        this.lavaSprites[1] = ModelLoader.LAVA_FLOW.getSprite();
+        this.lavaSprites[1] = client.getSpriteAtlas().getSprite(ModelLoader.LAVA_FLOW);
+        //this.lavaSprites[1] = ModelLoader.LAVA_FLOW.getSprite();
 
         this.waterSprites[0] = models.getModel(Blocks.WATER.getDefaultState()).getSprite();
-        this.waterSprites[1] = ModelLoader.WATER_FLOW.getSprite();
+        this.waterSprites[1] = client.getSpriteAtlas().getSprite(ModelLoader.WATER_FLOW);
+        //this.waterSprites[1] = ((ModelIdentifier) ModelLoader.WATER_FLOW).getVariant();
 
-        this.waterOverlaySprite = ModelLoader.WATER_OVERLAY.getSprite();
+        this.waterOverlaySprite = client.getSpriteAtlas().getSprite(ModelLoader.WATER_OVERLAY);
+        //this.waterOverlaySprite = ModelLoader.WATER_OVERLAY.getSprite();
 
         int normal = Norm3b.pack(0.0f, 1.0f, 0.0f);
 
@@ -348,7 +352,7 @@ public class FluidRenderer {
         return rendered;
     }
 
-    private void calculateQuadColors(ModelQuadViewMutable quad, BlockRenderView world,  BlockPos pos, LightPipeline lighter, Direction dir, float brightness, boolean colorized) {
+    private void calculateQuadColors(ModelQuadViewMutable quad, BlockRenderView world, BlockPos pos, LightPipeline lighter, Direction dir, float brightness, boolean colorized) {
         QuadLightData light = this.quadLightData;
         lighter.calculate(quad, pos, light, dir, false);
 

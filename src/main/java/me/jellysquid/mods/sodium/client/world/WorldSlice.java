@@ -11,14 +11,13 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.biome.source.BiomeArray;
+import net.minecraft.world.biome.BiomeAccess;
+import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
@@ -33,10 +32,10 @@ import java.util.Map;
  * Takes a slice of world state (block states, biome and light data arrays) and copies the data for use in off-thread
  * operations. This allows chunk build tasks to see a consistent snapshot of chunk data at the exact moment the task was
  * created.
- *
+ * <p>
  * World slices are not safe to use from multiple threads at once, but the data they contain is safe from modification
  * by the main client thread.
- *
+ * <p>
  * You should use object pooling with this type to avoid huge allocations as instances of this class contain many large
  * arrays.
  */
@@ -98,7 +97,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     private int blockOffsetX, blockOffsetY, blockOffsetZ;
 
     public static WorldChunk[] createChunkSlice(World world, ChunkSectionPos pos) {
-        WorldChunk chunk = world.getChunk(pos.getX(), pos.getZ());
+        WorldChunk chunk = (WorldChunk) world.getChunk(pos.getX(), pos.getZ());
         ChunkSection section = chunk.getSectionArray()[pos.getY()];
 
         // If the chunk section is absent or empty, simply terminate now. There will never be anything in this chunk
@@ -119,7 +118,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         // Create an array of references to the world chunks in this slice
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                chunks[getLocalChunkIndex(x - minChunkX, z - minChunkZ)] = world.getChunk(x, z);
+                chunks[getLocalChunkIndex(x - minChunkX, z - minChunkZ)] = (WorldChunk) world.getChunk(x, z);
             }
         }
 
@@ -260,7 +259,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     }
 
     @Override
-    public int getColor(BlockPos pos, ColorResolver resolver) {
+    public int method_23752(BlockPos pos, ColorResolver resolver) {
         BiomeColorCache cache;
 
         if (this.prevColorResolver == resolver) {
@@ -317,11 +316,11 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     // TODO: Is this safe? The biome data arrays should be immutable once loaded into the client
     @Override
-    public Biome getBiomeForNoiseGen(int x, int y, int z) {
+    public Biome getStoredBiome(int x, int y, int z) {
         BiomeArray array = this.biomeArrays[this.getBiomeIndexForBlock(x, z)];
 
-        if (array != null ) {
-            return array.getBiomeForNoiseGen(x, y, z);
+        if (array != null) {
+            return array.getStoredBiome(x, y, z);
         }
 
         return this.world.getGeneratorStoredBiome(x, y, z);

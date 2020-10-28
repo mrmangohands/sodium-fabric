@@ -10,6 +10,7 @@ import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import org.spongepowered.asm.mixin.Final;
@@ -30,13 +31,13 @@ public class MixinModelPart {
      * @reason Use optimized vertex writer, avoid allocations, use quick matrix transformations
      */
     @Overwrite
-    private void renderCuboids(MatrixStack.Entry matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
+    private void renderCuboids(MatrixStack.Entry matrices, VertexConsumer vertexConsumer, int light, int overlay, Sprite sprite, float red, float green, float blue) {
         Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.getNormal());
         Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrices.getModel());
 
         QuadVertexConsumer quadConsumer = (QuadVertexConsumer) vertexConsumer;
 
-        int color = ColorABGR.pack(red, green, blue, alpha);
+        int color = ColorABGR.pack(red, green, blue, 1.0F);
 
         for (ModelPart.Cuboid cuboid : this.cuboids) {
             for (ModelPart.Quad quad : ((ModelCuboidAccessor) cuboid).getQuads()) {

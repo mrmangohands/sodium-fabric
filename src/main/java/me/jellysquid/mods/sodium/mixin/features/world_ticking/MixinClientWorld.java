@@ -72,7 +72,7 @@ public abstract class MixinClientWorld extends World {
     private void performBlockDisplayTick(BlockState blockState, BlockPos pos, Random random, boolean spawnBarrierParticles) {
         blockState.getBlock().randomDisplayTick(blockState, this, pos, random);
 
-        if (spawnBarrierParticles /*&& blockState.isOf(Blocks.BARRIER)*/) {
+        if (spawnBarrierParticles && blockState.getBlock() == Blocks.BARRIER) {
             this.performBarrierDisplayTick(pos);
         }
     }
@@ -106,7 +106,7 @@ public abstract class MixinClientWorld extends World {
             boolean solid = blockState.isSideSolidFullSquare(this, pos, Direction.DOWN);
 
             // FIXME: don't allocate here
-            BlockPos blockPos = pos.down();
+            BlockPos blockPos = (BlockPos) pos.down();
             this.addParticle(blockPos, this.getBlockState(blockPos), particleEffect, solid);
         }
     }

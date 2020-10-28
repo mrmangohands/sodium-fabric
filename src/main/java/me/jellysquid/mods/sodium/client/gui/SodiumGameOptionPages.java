@@ -50,12 +50,12 @@ public class SodiumGameOptionPages {
                         .setBinding((opts, value) -> {
                             opts.quality.enableClouds = value;
 
-                            if (MinecraftClient.isFancyGraphicsEnabled()) {
+                            /*if (MinecraftClient.isFancyGraphicsEnabled()) {
                                 Framebuffer framebuffer = MinecraftClient.getInstance().worldRenderer.getEntityOutlinesFramebuffer();
                                 if (framebuffer != null) {
                                     framebuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
                                 }
-                            }
+                            }*/
                         }, (opts) -> opts.quality.enableClouds)
                         .build())
                 .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)

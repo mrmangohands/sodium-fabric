@@ -21,7 +21,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.chunk.ChunkOcclusionDataBuilder;
+import net.minecraft.client.render.chunk.ChunkOcclusionGraphBuilder;
 import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +54,7 @@ public class ChunkRenderRebuildTask<T extends ChunkGraphicsState> extends ChunkR
     @Override
     public ChunkBuildResult<T> performBuild(ChunkRenderContext pipeline, ChunkBuildBuffers buffers, CancellationSource cancellationSource) {
         ChunkRenderData.Builder renderData = new ChunkRenderData.Builder();
-        ChunkOcclusionDataBuilder occluder = new ChunkOcclusionDataBuilder();
+        ChunkOcclusionGraphBuilder occluder = new ChunkOcclusionGraphBuilder();
         ChunkRenderBounds.Builder bounds = new ChunkRenderBounds.Builder();
 
         pipeline.init(this.slice, this.slice.getBlockOffsetX(), this.slice.getBlockOffsetY(), this.slice.getBlockOffsetZ());
@@ -118,7 +118,7 @@ public class ChunkRenderRebuildTask<T extends ChunkGraphicsState> extends ChunkR
                             BlockEntityRenderer<BlockEntity> renderer = BlockEntityRenderDispatcher.INSTANCE.get(entity);
 
                             if (renderer != null) {
-                                renderData.addBlockEntity(entity, !renderer.rendersOutsideBoundingBox(entity));
+                                renderData.addBlockEntity(entity, !renderer.method_3563(entity));
 
                                 bounds.addBlock(x, y, z);
                             }
