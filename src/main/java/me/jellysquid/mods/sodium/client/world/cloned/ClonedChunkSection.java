@@ -71,7 +71,7 @@ public class ClonedChunkSection {
         for (LightType type : LIGHT_TYPES) {
             this.lightDataArrays[type.ordinal()] = world.getLightingProvider()
                     .get(type)
-                    .getLightSection(pos);
+                    .getLightArray(pos);
         }
 
         this.biomeData = chunk.getBiomeArray();
@@ -153,7 +153,7 @@ public class ClonedChunkSection {
     private static ChunkSection getChunkSection(Chunk chunk, ChunkSectionPos pos) {
         ChunkSection section = null;
 
-        if (!World.isOutOfBuildLimitVertically(ChunkSectionPos.getBlockCoord(pos.getY()))) {
+        if (!World.isHeightInvalid(ChunkSectionPos.getWorldCoord(pos.getY()))) {
             section = chunk.getSectionArray()[pos.getY()];
         }
 
