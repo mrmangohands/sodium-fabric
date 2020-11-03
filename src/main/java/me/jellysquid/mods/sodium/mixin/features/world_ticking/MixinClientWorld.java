@@ -30,8 +30,9 @@ public abstract class MixinClientWorld extends World {
     protected abstract void addParticle(BlockPos pos, BlockState state, ParticleEffect parameters, boolean bl);
 
     protected MixinClientWorld(MutableWorldProperties mutableWorldProperties, RegistryKey<World> registryKey,
-                               DimensionType dimensionType, Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
-        super(mutableWorldProperties, registryKey, dimensionType, profiler, bl, bl2, l);
+                               RegistryKey<DimensionType> registryKey2, DimensionType dimensionType,
+                               Supplier<Profiler> profiler, boolean bl, boolean bl2, long l) {
+        super(mutableWorldProperties, registryKey, registryKey2, dimensionType, profiler, bl, bl2, l);
     }
 
     @Redirect(method = "doRandomBlockDisplayTicks", at = @At(value = "NEW", target = "java/util/Random"))
@@ -87,7 +88,7 @@ public abstract class MixinClientWorld extends World {
                 .orElse(null);
 
         if (config != null && config.shouldAddParticle(random)) {
-            this.addParticle(config.getParticle(),
+            this.addParticle(config.getParticleType(),
                     pos.getX() + random.nextDouble(),
                     pos.getY() + random.nextDouble(),
                     pos.getZ() + random.nextDouble(),
