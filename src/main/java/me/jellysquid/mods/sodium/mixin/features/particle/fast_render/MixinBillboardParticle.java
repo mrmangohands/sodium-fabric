@@ -53,11 +53,11 @@ public abstract class MixinBillboardParticle extends Particle {
         Quaternion quaternion;
 
         if (this.angle == 0.0F) {
-            quaternion = camera.getRotation();
+            quaternion = camera.method_23767();
         } else {
             float angle = MathHelper.lerp(tickDelta, this.prevAngle, this.angle);
 
-            quaternion = new Quaternion(camera.getRotation());
+            quaternion = new Quaternion(camera.method_23767());
             quaternion.hamiltonProduct(Vector3f.POSITIVE_Z.getRadialQuaternion(angle));
         }
 
