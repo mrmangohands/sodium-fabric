@@ -1,6 +1,5 @@
 package me.jellysquid.mods.sodium.mixin.features.entity.fast_render;
 
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import me.jellysquid.mods.sodium.client.model.ModelCuboidAccessor;
 import me.jellysquid.mods.sodium.client.model.vertex.DefaultVertexTypes;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexDrain;
@@ -15,12 +14,14 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 @Mixin(ModelPart.class)
 public class MixinModelPart {
@@ -28,7 +29,7 @@ public class MixinModelPart {
 
     @Shadow
     @Final
-    private ObjectList<ModelPart.Cuboid> cuboids;
+    private List<ModelPart.Cuboid> cuboids;
 
     /**
      * @author JellySquid
@@ -48,18 +49,30 @@ public class MixinModelPart {
 
         for (ModelPart.Cuboid cuboid : this.cuboids) {
             for (ModelPart.Quad quad : ((ModelCuboidAccessor) cuboid).getQuads()) {
-                float normX = normalExt.transformVecX(quad.field_21618);
-                float normY = normalExt.transformVecY(quad.field_21618);
-                float normZ = normalExt.transformVecZ(quad.field_21618);
+                //FIXME
+                //19w46a -> 19w45b
+                Vector3f vector3f = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[0].pos));
+                Vector3f vector3f2 = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[2].pos));
+                vector3f.multiply(matrices.getNormal());
+                vector3f2.multiply(matrices.getNormal());
+                vector3f2.cross(vector3f);
+                vector3f2.reciprocal();
+                float normX = vector3f2.getX();
+                float normY = vector3f2.getY();
+                float normZ = vector3f2.getZ();
+
+                //float normX = normalExt.transformVecX(quad.field_21618);
+                //float normY = normalExt.transformVecY(quad.field_21618);
+                //float normZ = normalExt.transformVecZ(quad.field_21618);
 
                 int norm = Norm3b.pack(normX, normY, normZ);
 
                 for (ModelPart.Vertex vertex : quad.vertices) {
-                    Vector3f pos = vertex.pos;
+                    Vec3d pos = vertex.pos;
 
-                    float x1 = pos.getX() * NORM;
-                    float y1 = pos.getY() * NORM;
-                    float z1 = pos.getZ() * NORM;
+                    float x1 = (float)pos.getX() * NORM;
+                    float y1 = (float)pos.getY() * NORM;
+                    float z1 = (float)pos.getZ() * NORM;
 
                     float x2 = modelExt.transformVecX(x1, y1, z1);
                     float y2 = modelExt.transformVecY(x1, y1, z1);

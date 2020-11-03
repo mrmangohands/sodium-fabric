@@ -67,7 +67,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             normVec.set(normX, normY, normZ);
             normVec.multiply(this.normalMatrix);
 
-            this.consumer.method_23919(posVec.getX(), posVec.getY(), posVec.getZ(), r, g, b, a, u, v, OverlayTexture.DEFAULT_UV, light, normVec.getX(), normVec.getY(), normVec.getZ());
+            this.consumer.vertex((double)posVec.getX(), (double)posVec.getY(), (double)posVec.getZ()).color(r, g, b, a).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(normVec.getX(), normVec.getY(), normVec.getZ()).next();
         }
     }
 
