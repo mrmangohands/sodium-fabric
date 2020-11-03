@@ -48,9 +48,9 @@ public class MixinModelPart {
 
         for (ModelPart.Cuboid cuboid : this.cuboids) {
             for (ModelPart.Quad quad : ((ModelCuboidAccessor) cuboid).getQuads()) {
-                float normX = normalExt.transformVecX(quad.direction);
-                float normY = normalExt.transformVecY(quad.direction);
-                float normZ = normalExt.transformVecZ(quad.direction);
+                float normX = normalExt.transformVecX(quad.field_21618);
+                float normY = normalExt.transformVecY(quad.field_21618);
+                float normZ = normalExt.transformVecZ(quad.field_21618);
 
                 int norm = Norm3b.pack(normX, normY, normZ);
 
@@ -71,8 +71,8 @@ public class MixinModelPart {
                        u = vertex.u;
                        v = vertex.v;
                     } else {
-                       u = sprite.getFrameU((double)(vertex.u * 16.0F));
-                       v = sprite.getFrameV((double)(vertex.v * 16.0F));
+                       u = sprite.getU((double)(vertex.u * 16.0F));
+                       v = sprite.getV((double)(vertex.v * 16.0F));
                     }
 
                     drain.writeQuad(x2, y2, z2, color, u, v, light, overlay, norm);

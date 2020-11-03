@@ -33,7 +33,7 @@ public class ChunkRenderContext {
         this.blockRenderer = new BlockRenderer(client, lightPipelineProvider, biomeColorBlender);
         this.fluidRenderer = new FluidRenderer(client, lightPipelineProvider, biomeColorBlender);
 
-        this.models = client.getBakedModelManager().getBlockModels();
+        this.models = client.getBakedModelManager().getBlockStateMaps();
     }
 
     public boolean renderBlock(BlockRenderView world, BlockState state, BlockPos pos, ModelQuadSinkDelegate consumer, boolean cull) {

@@ -44,7 +44,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             float y = quad.getY(i);
             float z = quad.getZ(i);
 
-            posVec.set(x, y, z, 1.0F);
+            posVec.method_23851(x, y, z, 1.0F);
             posVec.multiply(this.modelMatrix);
 
             int color = quad.getColor(i);
