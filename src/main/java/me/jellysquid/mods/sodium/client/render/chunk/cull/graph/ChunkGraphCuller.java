@@ -89,7 +89,7 @@ public class ChunkGraphCuller implements ChunkCuller {
             rootNode.resetCullingState();
             rootNode.setLastVisibleFrame(frame);
 
-            if (spectator && this.world.getBlockState(origin).isOpaqueFullCube(this.world, origin)) {
+            if (spectator && this.world.getBlockState(origin).isFullOpaque(this.world, origin)) {
                 this.useOcclusionCulling = false;
             }
 

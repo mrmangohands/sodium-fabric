@@ -14,6 +14,7 @@ import me.jellysquid.mods.sodium.client.model.quad.sink.ModelQuadSinkDelegate;
 import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
 import me.jellysquid.mods.sodium.client.util.ModelQuadUtil;
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
+import me.jellysquid.mods.sodium.client.util.color.ColorU8;
 import me.jellysquid.mods.sodium.client.util.rand.XoRoShiRoRandom;
 import me.jellysquid.mods.sodium.client.world.biome.BlockColorsExtended;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
@@ -45,7 +46,7 @@ public class BlockRenderer {
     private final boolean useAmbientOcclusion;
 
     public BlockRenderer(MinecraftClient client, LightPipelineProvider lighters, BiomeColorBlender biomeColorBlender) {
-        this.blockColors = (BlockColorsExtended) client.getBlockColors();
+        this.blockColors = (BlockColorsExtended) client.getBlockColorMap();
         this.biomeColorBlender = biomeColorBlender;
 
         this.lighters = lighters;
@@ -56,7 +57,7 @@ public class BlockRenderer {
 
     public boolean renderModel(BlockRenderView world, BlockState state, BlockPos pos, BakedModel model, ModelQuadSinkDelegate builder, boolean cull, long seed) {
         LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model));
-        Vec3d offset = state.getModelOffset(world, pos);
+        Vec3d offset = state.getOffsetPos(world, pos);
 
         boolean rendered = false;
 
@@ -99,7 +100,7 @@ public class BlockRenderer {
             BakedQuad quad = quads.get(i);
 
             QuadLightData light = this.cachedQuadLightData;
-            lighter.calculate((ModelQuadView) quad, pos, light, quad.getFace(), quad.hasShade());
+            lighter.calculate((ModelQuadView) quad, pos, light, quad.getFace());
 
             if (quad.hasColor() && colorizer == null) {
                 colorizer = this.blockColors.getColorProvider(state);
@@ -129,7 +130,19 @@ public class BlockRenderer {
             copy.setX(dstIndex, src.getX(srcIndex) + (float) offset.getX());
             copy.setY(dstIndex, src.getY(srcIndex) + (float) offset.getY());
             copy.setZ(dstIndex, src.getZ(srcIndex) + (float) offset.getZ());
-            copy.setColor(dstIndex, ColorABGR.mul(colors != null ? colors[srcIndex] : 0xFFFFFFFF, light.br[srcIndex]));
+
+            float br = light.br[srcIndex];
+
+            if (colors == null) {
+                copy.setColor(dstIndex, ColorABGR.mul(src.getColor(srcIndex), br));
+            } else {
+                float r = ColorU8.normalize(ColorABGR.unpackRed(colors[srcIndex]));
+                float g = ColorU8.normalize(ColorABGR.unpackGreen(colors[srcIndex]));
+                float b = ColorU8.normalize(ColorABGR.unpackBlue(colors[srcIndex]));
+
+                copy.setColor(dstIndex, ColorABGR.mul(src.getColor(srcIndex), r * br,  g * br, b * br));
+            }
+
             copy.setTexU(dstIndex, src.getTexU(srcIndex));
             copy.setTexV(dstIndex, src.getTexV(srcIndex));
             copy.setLight(dstIndex, light.lm[srcIndex]);

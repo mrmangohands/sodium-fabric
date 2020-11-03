@@ -3,7 +3,6 @@ package me.jellysquid.mods.sodium.client.gui.options.control;
 import me.jellysquid.mods.sodium.client.gui.options.Option;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
 import net.minecraft.client.util.Rect2i;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.Validate;
 
@@ -67,29 +66,29 @@ public class SliderControl implements Control<Integer> {
         }
 
         @Override
-        public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-            super.render(matrixStack, mouseX, mouseY, delta);
+        public void render(int mouseX, int mouseY, float delta) {
+            super.render(mouseX, mouseY, delta);
 
             if (this.option.isAvailable() && this.hovered) {
-                this.renderSlider(matrixStack);
+                this.renderSlider(mouseX, mouseY, delta);
             } else {
-                this.renderStandaloneValue(matrixStack);
+                this.renderStandaloneValue(mouseX, mouseY, delta);
             }
         }
 
-        private void renderStandaloneValue(MatrixStack matrixStack) {
+        private void renderStandaloneValue(int mouseX, int mouseY, float delta) {
             int sliderX = this.sliderBounds.getX();
             int sliderY = this.sliderBounds.getY();
             int sliderWidth = this.sliderBounds.getWidth();
             int sliderHeight = this.sliderBounds.getHeight();
 
             String label = this.formatter.format(this.option.getValue());
-            int labelWidth = this.font.getWidth(label);
+            int labelWidth = this.font.getStringWidth(label);
 
-            this.drawString(matrixStack, label, sliderX + sliderWidth - labelWidth, sliderY + (sliderHeight / 2) - 4, 0xFFFFFFFF);
+            this.drawString(label, sliderX + sliderWidth - labelWidth, sliderY + (sliderHeight / 2) - 4, 0xFFFFFFFF);
         }
 
-        private void renderSlider(MatrixStack matrixStack) {
+        private void renderSlider(int mouseX, int mouseY, float delta) {
             int sliderX = this.sliderBounds.getX();
             int sliderY = this.sliderBounds.getY();
             int sliderWidth = this.sliderBounds.getWidth();
@@ -105,9 +104,9 @@ public class SliderControl implements Control<Integer> {
 
             String label = String.valueOf(this.getIntValue());
 
-            int labelWidth = this.font.getWidth(label);
+            int labelWidth = this.font.getStringWidth(label);
 
-            this.drawString(matrixStack, label, sliderX - labelWidth - 6, sliderY + (sliderHeight / 2) - 4, 0xFFFFFFFF);
+            this.drawString(label, sliderX - labelWidth - 6, sliderY + (sliderHeight / 2) - 4, 0xFFFFFFFF);
         }
 
         public int getIntValue() {

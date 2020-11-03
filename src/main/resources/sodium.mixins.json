@@ -40,7 +40,7 @@
     "features.options.MixinGameOptions",
     "features.options.MixinInGameHud",
     "features.options.MixinMinecraftClient",
-    "features.options.MixinOptionsScreen",
+    "features.options.MixinSettingsScreen",
     "features.options.MixinWorldRenderer",
     "features.particle.cull.MixinParticleManager",
     "features.particle.fast_render.MixinBillboardParticle",

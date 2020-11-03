@@ -12,11 +12,9 @@ import me.jellysquid.mods.sodium.client.gui.options.storage.MinecraftOptionsStor
 import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage;
 import me.jellysquid.mods.sodium.client.util.UnsafeUtil;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.options.AttackIndicator;
-import net.minecraft.client.options.GraphicsMode;
 import net.minecraft.client.options.Option;
-import net.minecraft.client.options.ParticlesMode;
+import net.minecraft.client.options.ParticlesOption;
 import net.minecraft.client.util.Window;
 
 import java.util.ArrayList;
@@ -49,16 +47,7 @@ public class SodiumGameOptionPages {
                         .setName("Clouds")
                         .setTooltip("Controls whether or not clouds will be visible.")
                         .setControl(TickBoxControl::new)
-                        .setBinding((opts, value) -> {
-                            opts.quality.enableClouds = value;
-
-                            if (MinecraftClient.isFabulousGraphicsOrBetter()) {
-                                Framebuffer framebuffer = MinecraftClient.getInstance().worldRenderer.getCloudsFramebuffer();
-                                if (framebuffer != null) {
-                                    framebuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
-                                }
-                            }
-                        }, (opts) -> opts.quality.enableClouds)
+                        .setBinding((opts, value) -> opts.quality.enableClouds = value, (opts) -> opts.quality.enableClouds)
                         .setImpact(OptionImpact.LOW)
                         .build())
                 .build());
@@ -137,14 +126,14 @@ public class SodiumGameOptionPages {
         List<OptionGroup> groups = new ArrayList<>();
 
         groups.add(OptionGroup.createBuilder()
-                .add(OptionImpl.createBuilder(GraphicsMode.class, vanillaOpts)
+                .add(OptionImpl.createBuilder(SodiumGameOptions.DefaultGraphicsQuality.class, vanillaOpts)
                         .setName("Graphics Quality")
                         .setTooltip("The default graphics quality controls some legacy options and is necessary for mod compatibility. If the options below are left to " +
                                 "\"Default\", they will use this setting.")
-                        .setControl(option -> new CyclingControl<>(option, GraphicsMode.class, new String[] { "Fast", "Fancy", "Fabulous" }))
+                        .setControl(option -> new CyclingControl<>(option, SodiumGameOptions.DefaultGraphicsQuality.class))
                         .setBinding(
-                                (opts, value) -> opts.graphicsMode = value,
-                                opts -> opts.graphicsMode)
+                                (opts, value) -> opts.fancyGraphics = value == SodiumGameOptions.DefaultGraphicsQuality.FANCY,
+                                opts -> (opts.fancyGraphics ? SodiumGameOptions.DefaultGraphicsQuality.FANCY : SodiumGameOptions.DefaultGraphicsQuality.FAST))
                         .setImpact(OptionImpact.HIGH)
                         .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
                         .build())
@@ -165,10 +154,10 @@ public class SodiumGameOptionPages {
                         .setBinding((opts, value) -> opts.quality.weatherQuality = value, opts -> opts.quality.weatherQuality)
                         .setImpact(OptionImpact.MEDIUM)
                         .build())
-                .add(OptionImpl.createBuilder(ParticlesMode.class, vanillaOpts)
+                .add(OptionImpl.createBuilder(ParticlesOption.class, vanillaOpts)
                         .setName("Particle Quality")
                         .setTooltip("Controls the maximum number of particles which can be present on screen at any one time.")
-                        .setControl(opt -> new CyclingControl<>(opt, ParticlesMode.class, new String[] { "High", "Medium", "Low" }))
+                        .setControl(opt -> new CyclingControl<>(opt, ParticlesOption.class, new String[] { "High", "Medium", "Low" }))
                         .setBinding((opts, value) -> opts.particles = value, (opts) -> opts.particles)
                         .setImpact(OptionImpact.MEDIUM)
                         .build())
@@ -192,15 +181,6 @@ public class SodiumGameOptionPages {
                         .setImpact(OptionImpact.LOW)
                         .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
                         .build())
-                .add(OptionImpl.createBuilder(int.class, vanillaOpts)
-                        .setName("Entity Distance")
-                        .setTooltip("Controls how far away entities can render from the player. Higher values increase the render distance at the expense " +
-                                "of frame rates.")
-                        .setControl(option -> new SliderControl(option, 50, 500, 25, ControlValueFormatter.percentage()))
-                        .setBinding((opts, value) -> opts.entityDistanceScaling = value / 100.0F, opts -> Math.round(opts.entityDistanceScaling * 100.0F))
-                        .setImpact(OptionImpact.MEDIUM)
-                        .build()
-                )
                 .add(OptionImpl.createBuilder(boolean.class, vanillaOpts)
                         .setName("Entity Shadows")
                         .setTooltip("If enabled, basic shadows will be rendered beneath mobs and other entities.")

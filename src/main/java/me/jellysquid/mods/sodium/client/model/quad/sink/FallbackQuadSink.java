@@ -8,11 +8,7 @@ import me.jellysquid.mods.sodium.client.util.color.ColorU8;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.client.util.math.*;
 
 /**
  * A fallback implementation of {@link ModelQuadSink} for when we're writing into an arbitrary {@link BufferBuilder}.
