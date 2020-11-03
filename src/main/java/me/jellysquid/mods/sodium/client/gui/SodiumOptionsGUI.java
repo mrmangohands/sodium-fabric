@@ -11,6 +11,7 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.VideoOptionsScreen;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.TextFormat;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -237,7 +238,9 @@ public class SodiumOptionsGUI extends Screen {
         }
 
         if (flags.contains(OptionFlag.REQUIRES_ASSET_RELOAD)) {
-            client.resetMipmapLevels(client.options.mipmapLevels);
+            client.getSpriteAtlas().setMipLevel(client.options.mipmapLevels);
+            client.getTextureManager().bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEX);
+            client.getSpriteAtlas().setFilter(false, client.options.mipmapLevels > 0);
             client.reloadResourcesConcurrently();
         }
 

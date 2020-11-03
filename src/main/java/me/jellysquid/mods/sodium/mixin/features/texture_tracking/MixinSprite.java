@@ -31,8 +31,7 @@ public abstract class MixinSprite implements SpriteExtended {
     protected abstract void upload(int int_1);
 
     @Shadow
-    @Final
-    private Sprite.Interpolation interpolation;
+    protected abstract void interpolateFrames();
 
     /**
      * @author JellySquid
@@ -62,11 +61,11 @@ public abstract class MixinSprite implements SpriteExtended {
             if (prevFrameIndex != frameIndex && frameIndex >= 0 && frameIndex < this.getFrameCount()) {
                 this.upload(frameIndex);
             }
-        } else if (this.interpolation != null) {
+        } else if (this.animationMetadata.shouldInterpolate()) {
             if (!RenderSystem.isOnRenderThread()) {
-                RenderSystem.recordRenderCall(this::updateInterpolatedTexture);
+                RenderSystem.recordRenderCall(this::interpolateFrames);
             } else {
-                this.updateInterpolatedTexture();
+                this.interpolateFrames();
             }
         }
 
@@ -76,9 +75,5 @@ public abstract class MixinSprite implements SpriteExtended {
     @Override
     public void markActive() {
         this.forceNextUpdate = true;
-    }
-
-    private void updateInterpolatedTexture() {
-        this.interpolation.method_24128();
     }
 }

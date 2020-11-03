@@ -2,9 +2,9 @@ accessWidener v1 named
 
 accessible class net/minecraft/client/model/ModelPart$Vertex
 accessible class net/minecraft/client/model/ModelPart$Quad
-accessible class net/minecraft/client/texture/Sprite$Interpolation
+accessible class net/minecraft/client/texture/Sprite$class_4728
 
-accessible method net/minecraft/client/texture/Sprite$Interpolation method_24128 ()V
+accessible method net/minecraft/client/texture/Sprite$class_4728 method_24128 ()V
 accessible method net/minecraft/client/render/Frustum isVisible (DDDDDD)Z
 
 accessible field net/minecraft/world/chunk/PalettedContainer data Lnet/minecraft/util/PackedIntegerArray;

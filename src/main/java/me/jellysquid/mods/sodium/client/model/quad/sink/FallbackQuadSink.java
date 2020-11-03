@@ -45,7 +45,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             float z = quad.getZ(i);
 
             posVec.set(x, y, z, 1.0F);
-            posVec.transform(this.modelMatrix);
+            posVec.multiply(this.modelMatrix);
 
             int color = quad.getColor(i);
 
@@ -65,9 +65,9 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             float normZ = Norm3b.unpackZ(norm);
 
             normVec.set(normX, normY, normZ);
-            normVec.transform(this.normalMatrix);
+            normVec.multiply(this.normalMatrix);
 
-            this.consumer.elements(posVec.getX(), posVec.getY(), posVec.getZ(), r, g, b, a, u, v, OverlayTexture.DEFAULT_UV, light, normVec.getX(), normVec.getY(), normVec.getZ());
+            this.consumer.method_23919(posVec.getX(), posVec.getY(), posVec.getZ(), r, g, b, a, u, v, OverlayTexture.DEFAULT_UV, light, normVec.getX(), normVec.getY(), normVec.getZ());
         }
     }
 

@@ -87,7 +87,7 @@ public abstract class MixinClientWorld extends World {
             boolean solid = blockState.isSideSolidFullSquare(this, pos, Direction.DOWN);
 
             // FIXME: don't allocate here
-            BlockPos blockPos = pos.down();
+            BlockPos blockPos = pos.method_10074();
             this.addParticle(blockPos, this.getBlockState(blockPos), particleEffect, solid);
         }
     }

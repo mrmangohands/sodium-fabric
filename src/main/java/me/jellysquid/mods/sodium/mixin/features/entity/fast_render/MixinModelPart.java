@@ -12,12 +12,15 @@ import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+
+import javax.annotation.Nullable;
 
 @Mixin(ModelPart.class)
 public class MixinModelPart {
@@ -32,14 +35,16 @@ public class MixinModelPart {
      * @reason Use optimized vertex writer, avoid allocations, use quick matrix transformations
      */
     @Overwrite
-    private void renderCuboids(MatrixStack.Entry matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
+    private void renderCuboids(MatrixStack.Entry matrices, VertexConsumer vertexConsumer, int light, int overlay, @Nullable Sprite sprite, float red, float green, float blue) {
         Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.getNormal());
         Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrices.getModel());
 
         QuadVertexSink drain = VertexDrain.of(vertexConsumer).createSink(DefaultVertexTypes.QUADS);
         drain.ensureCapacity(this.cuboids.size() * 6 * 4);
 
-        int color = ColorABGR.pack(red, green, blue, alpha);
+        // FIXME
+        // Investigate 1.0F, 1.15-pre1 -> 19w46b
+        int color = ColorABGR.pack(red, green, blue, 1.0F);
 
         for (ModelPart.Cuboid cuboid : this.cuboids) {
             for (ModelPart.Quad quad : ((ModelCuboidAccessor) cuboid).getQuads()) {
@@ -60,7 +65,17 @@ public class MixinModelPart {
                     float y2 = modelExt.transformVecY(x1, y1, z1);
                     float z2 = modelExt.transformVecZ(x1, y1, z1);
 
-                    drain.writeQuad(x2, y2, z2, color, vertex.u, vertex.v, light, overlay, norm);
+                    float u;
+                    float v;
+                    if (sprite == null) {
+                       u = vertex.u;
+                       v = vertex.v;
+                    } else {
+                       u = sprite.getFrameU((double)(vertex.u * 16.0F));
+                       v = sprite.getFrameV((double)(vertex.v * 16.0F));
+                    }
+
+                    drain.writeQuad(x2, y2, z2, color, u, v, light, overlay, norm);
                 }
             }
         }

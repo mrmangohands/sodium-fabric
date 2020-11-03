@@ -5,6 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.LightType;
 
 public class EntityLighter {
     private static final double MIN_BOX_SIZE = 0.001D;
@@ -77,10 +78,12 @@ public class EntityLighter {
                     max += weight;
 
                     // Sum the light actually contributed by this volume
-                    sl += weight * (lighter.bridge$getSkyLight(entity, pos) / MAX_LIGHT_VAL);
+                    //sl += weight * (lighter.bridge$getSkyLight(entity, pos) / MAX_LIGHT_VAL);
+                    sl += weight * (entity.world.getLightLevel(LightType.SKY, pos) / MAX_LIGHT_VAL);
 
                     if (calcBlockLight) {
-                        bl += weight * (lighter.bridge$getBlockLight(entity, pos) / MAX_LIGHT_VAL);
+                        //bl += weight * (lighter.bridge$getBlockLight(entity, pos) / MAX_LIGHT_VAL);
+                        bl += weight * (entity.world.getLightLevel(LightType.BLOCK, pos) / MAX_LIGHT_VAL);
                     } else {
                         bl += weight;
                     }

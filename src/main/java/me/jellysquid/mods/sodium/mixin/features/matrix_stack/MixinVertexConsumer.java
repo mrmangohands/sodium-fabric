@@ -37,7 +37,7 @@ public interface MixinVertexConsumer {
      * @author JellySquid
      */
     @Overwrite
-    default VertexConsumer normal(Matrix3f matrix, float x, float y, float z) {
+    default VertexConsumer method_23763(Matrix3f matrix, float x, float y, float z) {
         Matrix3fExtended ext = MatrixUtil.getExtendedMatrix(matrix);
         float x2 = ext.transformVecX(x, y, z);
         float y2 = ext.transformVecY(x, y, z);

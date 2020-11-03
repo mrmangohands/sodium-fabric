@@ -79,7 +79,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
             int color = ColorABGR.pack(fR, fG, fB, 1.0F);
 
             Vector4f pos = new Vector4f(x, y, z, 1.0F);
-            pos.transform(modelMatrix);
+            pos.multiply(modelMatrix);
 
             drain.writeQuad(pos.getX(), pos.getY(), pos.getZ(), color, u, v, light[i], overlay, norm);
         }

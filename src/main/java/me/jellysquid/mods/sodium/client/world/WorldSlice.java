@@ -17,8 +17,8 @@ import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.biome.source.BiomeArray;
+import net.minecraft.world.biome.BiomeAccess;
+import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.chunk.light.ChunkLightingView;
 import net.minecraft.world.chunk.light.LightingProvider;
@@ -115,7 +115,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     private ChunkSectionPos origin;
 
     public static WorldChunk[] createChunkSlice(World world, ChunkSectionPos pos) {
-        WorldChunk chunk = world.getChunk(pos.getX(), pos.getZ());
+        WorldChunk chunk = world.method_8497(pos.getX(), pos.getZ());
         ChunkSection section = chunk.getSectionArray()[pos.getY()];
 
         // If the chunk section is absent or empty, simply terminate now. There will never be anything in this chunk
@@ -136,7 +136,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         // Create an array of references to the world chunks in this slice
         for (int x = minChunkX; x <= maxChunkX; x++) {
             for (int z = minChunkZ; z <= maxChunkZ; z++) {
-                chunks[getLocalChunkIndex(x - minChunkX, z - minChunkZ)] = world.getChunk(x, z);
+                chunks[getLocalChunkIndex(x - minChunkX, z - minChunkZ)] = world.method_8497(x, z);
             }
         }
 
@@ -319,7 +319,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     }
 
     @Override
-    public int getColor(BlockPos pos, ColorResolver resolver) {
+    public int method_23752(BlockPos pos, ColorResolver resolver) {
         BiomeColorCache cache;
 
         if (this.prevColorResolver == resolver) {
@@ -366,7 +366,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     // TODO: Is this safe? The biome data arrays should be immutable once loaded into the client
     @Override
-    public Biome getBiomeForNoiseGen(int x, int y, int z) {
+    public Biome getStoredBiome(int x, int y, int z) {
         int x2 = (x >> 2) - (this.baseX >> 4);
         int z2 = (z >> 2) - (this.baseZ >> 4);
 
@@ -375,7 +375,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         BiomeArray array = this.biomeArrays[getLocalChunkIndex(x2, z2)];
 
         if (array != null ) {
-            return array.getBiomeForNoiseGen(x, y, z);
+            return array.getStoredBiome(x, y, z);
         }
 
         return this.world.getGeneratorStoredBiome(x, y, z);

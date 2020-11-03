@@ -6,7 +6,7 @@ import me.jellysquid.mods.sodium.client.gl.util.BufferSlice;
 import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.render.chunk.ChunkOcclusionData;
+import net.minecraft.client.render.chunk.ChunkOcclusionGraph;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.math.Direction;
 
@@ -26,7 +26,7 @@ public class ChunkRenderData {
 
     private EnumMap<BlockRenderPass, ChunkMeshData> meshes;
 
-    private ChunkOcclusionData occlusionData;
+    private ChunkOcclusionGraph occlusionData;
     private ChunkRenderBounds bounds;
 
     private List<Sprite> animatedSprites;
@@ -46,7 +46,7 @@ public class ChunkRenderData {
         return this.bounds;
     }
 
-    public ChunkOcclusionData getOcclusionData() {
+    public ChunkOcclusionGraph getOcclusionData() {
         return this.occlusionData;
     }
 
@@ -91,7 +91,7 @@ public class ChunkRenderData {
 
         private final EnumMap<BlockRenderPass, ChunkMeshData> meshes = new EnumMap<>(BlockRenderPass.class);
 
-        private ChunkOcclusionData occlusionData;
+        private ChunkOcclusionGraph occlusionData;
         private ChunkRenderBounds bounds = ChunkRenderBounds.ALWAYS_FALSE;
 
         public Builder() {
@@ -104,7 +104,7 @@ public class ChunkRenderData {
             this.bounds = bounds;
         }
 
-        public void setOcclusionData(ChunkOcclusionData data) {
+        public void setOcclusionData(ChunkOcclusionGraph data) {
             this.occlusionData = data;
         }
 
@@ -161,7 +161,7 @@ public class ChunkRenderData {
     }
 
     private static ChunkRenderData createEmptyData() {
-        ChunkOcclusionData occlusionData = new ChunkOcclusionData();
+        ChunkOcclusionGraph occlusionData = new ChunkOcclusionGraph();
         occlusionData.addOpenEdgeFaces(EnumSet.allOf(Direction.class));
 
         ChunkRenderData.Builder meshInfo = new ChunkRenderData.Builder();

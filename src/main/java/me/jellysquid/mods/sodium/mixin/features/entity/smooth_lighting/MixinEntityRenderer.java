@@ -18,13 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityRenderer.class)
 public abstract class MixinEntityRenderer<T extends Entity> implements EntityLightSampler<T> {
-    @Inject(method = "method_24088", at = @At("HEAD"), cancellable = true)
+    // FIXME
+    /*@Inject(method = "method_24088", at = @At("HEAD"), cancellable = true)
     private void preGetLight(T entity, float tickDelta, CallbackInfoReturnable<Integer> cir) {
         // Use smooth entity lighting if enabled
         if (SodiumClientMod.options().quality.smoothLighting == SodiumGameOptions.LightingQuality.HIGH) {
             cir.setReturnValue(EntityLighter.getBlendedLight(this, entity, tickDelta));
         }
-    }
+    }*/
 
     @Inject(method = "isVisible", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Frustum;isVisible(Lnet/minecraft/util/math/Box;)Z", shift = At.Shift.AFTER), cancellable = true)
     private void preShouldRender(T entity, Frustum frustum, double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {

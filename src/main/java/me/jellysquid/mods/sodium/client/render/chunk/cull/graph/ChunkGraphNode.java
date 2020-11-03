@@ -3,7 +3,7 @@ package me.jellysquid.mods.sodium.client.render.chunk.cull.graph;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
-import net.minecraft.client.render.chunk.ChunkOcclusionData;
+import net.minecraft.client.render.chunk.ChunkOcclusionGraph;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
@@ -57,11 +57,11 @@ public class ChunkGraphNode {
         this.nodes[dir.ordinal()] = node;
     }
 
-    public void setOcclusionData(ChunkOcclusionData occlusionData) {
+    public void setOcclusionData(ChunkOcclusionGraph occlusionData) {
         this.visibilityData = calculateVisibilityData(occlusionData);
     }
 
-    private static long calculateVisibilityData(ChunkOcclusionData occlusionData) {
+    private static long calculateVisibilityData(ChunkOcclusionGraph occlusionData) {
         long visibilityData = 0;
 
         for (Direction from : DirectionUtil.ALL_DIRECTIONS) {

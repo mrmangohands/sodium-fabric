@@ -8,7 +8,7 @@ import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.chunk.ChunkOcclusionData;
+import net.minecraft.client.render.chunk.ChunkOcclusionGraph;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
@@ -73,7 +73,7 @@ public class ChunkGraphCuller implements ChunkCuller {
     private void initSearch(Camera camera, FrustumExtended frustum, int frame, boolean spectator) {
         this.activeFrame = frame;
         this.frustum = frustum;
-        this.useOcclusionCulling = MinecraftClient.getInstance().chunkCullingEnabled;
+        this.useOcclusionCulling = MinecraftClient.getInstance().field_1730;
 
         this.visible.clear();
 
@@ -171,7 +171,7 @@ public class ChunkGraphCuller implements ChunkCuller {
     }
 
     @Override
-    public void onSectionStateChanged(int x, int y, int z, ChunkOcclusionData occlusionData) {
+    public void onSectionStateChanged(int x, int y, int z, ChunkOcclusionGraph occlusionData) {
         ChunkGraphNode node = this.getNode(x, y, z);
 
         if (node != null) {

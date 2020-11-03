@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.longs.Long2ReferenceLinkedOpenHashMap;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.common.util.pool.ObjectPool;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.world.biome.source.BiomeAccessType;
+import net.minecraft.world.biome.BiomeAccessType;
 
 public class BiomeCacheManager {
     private static final int CACHE_SIZE = 256;

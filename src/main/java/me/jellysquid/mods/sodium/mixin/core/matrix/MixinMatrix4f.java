@@ -5,6 +5,7 @@ import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.util.math.Quaternion;
 import org.lwjgl.system.MemoryUtil;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,75 +16,31 @@ import java.nio.FloatBuffer;
 
 @Mixin(Matrix4f.class)
 public class MixinMatrix4f implements Matrix4fExtended {
+    @Final
     @Shadow
-    protected float a00;
-
-    @Shadow
-    protected float a01;
-
-    @Shadow
-    protected float a02;
-
-    @Shadow
-    protected float a03;
-
-    @Shadow
-    protected float a10;
-
-    @Shadow
-    protected float a11;
-
-    @Shadow
-    protected float a12;
-
-    @Shadow
-    protected float a13;
-
-    @Shadow
-    protected float a20;
-
-    @Shadow
-    protected float a21;
-
-    @Shadow
-    protected float a22;
-
-    @Shadow
-    protected float a23;
-
-    @Shadow
-    protected float a30;
-
-    @Shadow
-    protected float a31;
-
-    @Shadow
-    protected float a32;
-
-    @Shadow
-    protected float a33;
+    private float[] components;
 
     @Override
     public void translate(float x, float y, float z) {
-        this.a03 = this.a00 * x + this.a01 * y + this.a02 * z + this.a03;
-        this.a13 = this.a10 * x + this.a11 * y + this.a12 * z + this.a13;
-        this.a23 = this.a20 * x + this.a21 * y + this.a22 * z + this.a23;
-        this.a33 = this.a30 * x + this.a31 * y + this.a32 * z + this.a33;
+        this.components[12] = this.components[0] * x + this.components[4] * y + this.components[8] * z + this.components[12];
+        this.components[13] = this.components[1] * x + this.components[5] * y + this.components[9] * z + this.components[13];
+        this.components[14] = this.components[2] * x + this.components[6] * y + this.components[10] * z + this.components[14];
+        this.components[15] = this.components[3] * x + this.components[7] * y + this.components[11] * z + this.components[15];
     }
 
     @Override
     public float transformVecX(float x, float y, float z) {
-        return (this.a00 * x) + (this.a01 * y) + (this.a02 * z) + (this.a03 * 1.0f);
+        return (this.components[0] * x) + (this.components[4] * y) + (this.components[8] * z) + (this.components[12] * 1.0f);
     }
 
     @Override
     public float transformVecY(float x, float y, float z) {
-        return (this.a10 * x) + (this.a11 * y) + (this.a12 * z) + (this.a13 * 1.0f);
+        return (this.components[1] * x) + (this.components[5] * y) + (this.components[9] * z) + (this.components[13] * 1.0f);
     }
 
     @Override
     public float transformVecZ(float x, float y, float z) {
-        return (this.a20 * x) + (this.a21 * y) + (this.a22 * z) + (this.a23 * 1.0f);
+        return (this.components[2] * x) + (this.components[6] * y) + (this.components[10] * z) + (this.components[14] * 1.0f);
     }
 
     @Override
@@ -115,31 +72,31 @@ public class MixinMatrix4f implements Matrix4fExtended {
         float w = quaternion.getA();
 
         float xx = 2.0F * x * x;
-        float ta11 = 1.0F - xx;
-        float ta22 = 1.0F - xx;
+        float tcomponents5 = 1.0F - xx;
+        float tcomponents10 = 1.0F - xx;
 
         float xw = x * w;
 
-        float ta21 = 2.0F * xw;
-        float ta12 = 2.0F * -xw;
+        float tcomponents6 = 2.0F * xw;
+        float tcomponents9 = 2.0F * -xw;
 
-        float a01 = this.a01 * ta11 + this.a02 * ta21;
-        float a02 = this.a01 * ta12 + this.a02 * ta22;
-        float a11 = this.a11 * ta11 + this.a12 * ta21;
-        float a12 = this.a11 * ta12 + this.a12 * ta22;
-        float a21 = this.a21 * ta11 + this.a22 * ta21;
-        float a22 = this.a21 * ta12 + this.a22 * ta22;
-        float a31 = this.a31 * ta11 + this.a32 * ta21;
-        float a32 = this.a31 * ta12 + this.a32 * ta22;
+        float components4 = this.components[4] * tcomponents5 + this.components[8] * tcomponents6;
+        float components8 = this.components[4] * tcomponents9 + this.components[8] * tcomponents10;
+        float components5 = this.components[5] * tcomponents5 + this.components[9] * tcomponents6;
+        float components9 = this.components[5] * tcomponents9 + this.components[9] * tcomponents10;
+        float components6 = this.components[6] * tcomponents5 + this.components[10] * tcomponents6;
+        float components10 = this.components[6] * tcomponents9 + this.components[10] * tcomponents10;
+        float components7 = this.components[7] * tcomponents5 + this.components[11] * tcomponents6;
+        float components11 = this.components[7] * tcomponents9 + this.components[11] * tcomponents10;
 
-        this.a01 = a01;
-        this.a02 = a02;
-        this.a11 = a11;
-        this.a12 = a12;
-        this.a21 = a21;
-        this.a22 = a22;
-        this.a31 = a31;
-        this.a32 = a32;
+        this.components[4] = components4;
+        this.components[8] = components8;
+        this.components[5] = components5;
+        this.components[9] = components9;
+        this.components[6] = components6;
+        this.components[10] = components10;
+        this.components[7] = components7;
+        this.components[11] = components11;
     }
 
     private void rotateY(Quaternion quaternion) {
@@ -147,29 +104,29 @@ public class MixinMatrix4f implements Matrix4fExtended {
         float w = quaternion.getA();
 
         float yy = 2.0F * y * y;
-        float ta00 = 1.0F - yy;
-        float ta22 = 1.0F - yy;
+        float tcomponents0 = 1.0F - yy;
+        float tcomponents10 = 1.0F - yy;
         float yw = y * w;
-        float ta20 = 2.0F * -yw;
-        float ta02 = 2.0F * yw;
+        float tcomponents2 = 2.0F * -yw;
+        float tcomponents8 = 2.0F * yw;
 
-        float a00 = this.a00 * ta00 + this.a02 * ta20;
-        float a02 = this.a00 * ta02 + this.a02 * ta22;
-        float a10 = this.a10 * ta00 + this.a12 * ta20;
-        float a12 = this.a10 * ta02 + this.a12 * ta22;
-        float a20 = this.a20 * ta00 + this.a22 * ta20;
-        float a22 = this.a20 * ta02 + this.a22 * ta22;
-        float a30 = this.a30 * ta00 + this.a32 * ta20;
-        float a32 = this.a30 * ta02 + this.a32 * ta22;
+        float components0 = this.components[0] * tcomponents0 + this.components[8] * tcomponents2;
+        float components8 = this.components[0] * tcomponents8 + this.components[8] * tcomponents10;
+        float components1 = this.components[1] * tcomponents0 + this.components[9] * tcomponents2;
+        float components9 = this.components[1] * tcomponents8 + this.components[9] * tcomponents10;
+        float components2 = this.components[2] * tcomponents0 + this.components[10] * tcomponents2;
+        float components10 = this.components[2] * tcomponents8 + this.components[10] * tcomponents10;
+        float components3 = this.components[3] * tcomponents0 + this.components[11] * tcomponents2;
+        float components11 = this.components[3] * tcomponents8 + this.components[11] * tcomponents10;
 
-        this.a00 = a00;
-        this.a02 = a02;
-        this.a10 = a10;
-        this.a12 = a12;
-        this.a20 = a20;
-        this.a22 = a22;
-        this.a30 = a30;
-        this.a32 = a32;
+        this.components[0] = components0;
+        this.components[8] = components8;
+        this.components[1] = components1;
+        this.components[9] = components9;
+        this.components[2] = components2;
+        this.components[10] = components10;
+        this.components[3] = components3;
+        this.components[11] = components11;
     }
 
     private void rotateZ(Quaternion quaternion) {
@@ -177,29 +134,29 @@ public class MixinMatrix4f implements Matrix4fExtended {
         float w = quaternion.getA();
 
         float zz = 2.0F * z * z;
-        float ta00 = 1.0F - zz;
-        float ta11 = 1.0F - zz;
+        float tcomponents0 = 1.0F - zz;
+        float tcomponents5 = 1.0F - zz;
         float zw = z * w;
-        float ta10 = 2.0F * zw;
-        float ta01 = 2.0F * -zw;
+        float tcomponents1 = 2.0F * zw;
+        float tcomponents4 = 2.0F * -zw;
 
-        float a00 = this.a00 * ta00 + this.a01 * ta10;
-        float a01 = this.a00 * ta01 + this.a01 * ta11;
-        float a10 = this.a10 * ta00 + this.a11 * ta10;
-        float a11 = this.a10 * ta01 + this.a11 * ta11;
-        float a20 = this.a20 * ta00 + this.a21 * ta10;
-        float a21 = this.a20 * ta01 + this.a21 * ta11;
-        float a30 = this.a30 * ta00 + this.a31 * ta10;
-        float a31 = this.a30 * ta01 + this.a31 * ta11;
+        float components0 = this.components[0] * tcomponents0 + this.components[4] * tcomponents1;
+        float components4 = this.components[0] * tcomponents4 + this.components[4] * tcomponents5;
+        float components1 = this.components[1] * tcomponents0 + this.components[5] * tcomponents1;
+        float components5 = this.components[1] * tcomponents4 + this.components[5] * tcomponents5;
+        float components2 = this.components[2] * tcomponents0 + this.components[6] * tcomponents1;
+        float components6 = this.components[2] * tcomponents4 + this.components[6] * tcomponents5;
+        float components3 = this.components[3] * tcomponents0 + this.components[7] * tcomponents1;
+        float components7 = this.components[3] * tcomponents4 + this.components[7] * tcomponents5;
 
-        this.a00 = a00;
-        this.a01 = a01;
-        this.a10 = a10;
-        this.a11 = a11;
-        this.a20 = a20;
-        this.a21 = a21;
-        this.a30 = a30;
-        this.a31 = a31;
+        this.components[0] = components0;
+        this.components[4] = components4;
+        this.components[1] = components1;
+        this.components[5] = components5;
+        this.components[2] = components2;
+        this.components[6] = components6;
+        this.components[3] = components3;
+        this.components[7] = components7;
     }
 
     private void rotateXYZ(Quaternion quaternion) {
@@ -211,47 +168,47 @@ public class MixinMatrix4f implements Matrix4fExtended {
         float xx = 2.0F * x * x;
         float yy = 2.0F * y * y;
         float zz = 2.0F * z * z;
-        float ta00 = 1.0F - yy - zz;
-        float ta11 = 1.0F - zz - xx;
-        float ta22 = 1.0F - xx - yy;
+        float tcomponents0 = 1.0F - yy - zz;
+        float tcomponents5 = 1.0F - zz - xx;
+        float tcomponents10 = 1.0F - xx - yy;
         float xy = x * y;
         float yz = y * z;
         float zx = z * x;
         float xw = x * w;
         float yw = y * w;
         float zw = z * w;
-        float ta10 = 2.0F * (xy + zw);
-        float ta01 = 2.0F * (xy - zw);
-        float ta20 = 2.0F * (zx - yw);
-        float ta02 = 2.0F * (zx + yw);
-        float ta21 = 2.0F * (yz + xw);
-        float ta12 = 2.0F * (yz - xw);
+        float tcomponents1 = 2.0F * (xy + zw);
+        float tcomponents4 = 2.0F * (xy - zw);
+        float tcomponents2 = 2.0F * (zx - yw);
+        float tcomponents8 = 2.0F * (zx + yw);
+        float tcomponents6 = 2.0F * (yz + xw);
+        float tcomponents9 = 2.0F * (yz - xw);
 
-        float a00 = this.a00 * ta00 + this.a01 * ta10 + this.a02 * ta20;
-        float a01 = this.a00 * ta01 + this.a01 * ta11 + this.a02 * ta21;
-        float a02 = this.a00 * ta02 + this.a01 * ta12 + this.a02 * ta22;
-        float a10 = this.a10 * ta00 + this.a11 * ta10 + this.a12 * ta20;
-        float a11 = this.a10 * ta01 + this.a11 * ta11 + this.a12 * ta21;
-        float a12 = this.a10 * ta02 + this.a11 * ta12 + this.a12 * ta22;
-        float a20 = this.a20 * ta00 + this.a21 * ta10 + this.a22 * ta20;
-        float a21 = this.a20 * ta01 + this.a21 * ta11 + this.a22 * ta21;
-        float a22 = this.a20 * ta02 + this.a21 * ta12 + this.a22 * ta22;
-        float a30 = this.a30 * ta00 + this.a31 * ta10 + this.a32 * ta20;
-        float a31 = this.a30 * ta01 + this.a31 * ta11 + this.a32 * ta21;
-        float a32 = this.a30 * ta02 + this.a31 * ta12 + this.a32 * ta22;
+        float components0 = this.components[0] * tcomponents0 + this.components[4] * tcomponents1 + this.components[8] * tcomponents2;
+        float components4 = this.components[0] * tcomponents4 + this.components[4] * tcomponents5 + this.components[8] * tcomponents6;
+        float components8 = this.components[0] * tcomponents8 + this.components[4] * tcomponents9 + this.components[8] * tcomponents10;
+        float components1 = this.components[1] * tcomponents0 + this.components[5] * tcomponents1 + this.components[9] * tcomponents2;
+        float components5 = this.components[1] * tcomponents4 + this.components[5] * tcomponents5 + this.components[9] * tcomponents6;
+        float components9 = this.components[1] * tcomponents8 + this.components[5] * tcomponents9 + this.components[9] * tcomponents10;
+        float components2 = this.components[2] * tcomponents0 + this.components[6] * tcomponents1 + this.components[10] * tcomponents2;
+        float components6 = this.components[2] * tcomponents4 + this.components[6] * tcomponents5 + this.components[10] * tcomponents6;
+        float components10 = this.components[2] * tcomponents8 + this.components[6] * tcomponents9 + this.components[10] * tcomponents10;
+        float components3 = this.components[3] * tcomponents0 + this.components[7] * tcomponents1 + this.components[11] * tcomponents2;
+        float components7 = this.components[3] * tcomponents4 + this.components[7] * tcomponents5 + this.components[11] * tcomponents6;
+        float components11 = this.components[3] * tcomponents8 + this.components[7] * tcomponents9 + this.components[11] * tcomponents10;
 
-        this.a00 = a00;
-        this.a01 = a01;
-        this.a02 = a02;
-        this.a10 = a10;
-        this.a11 = a11;
-        this.a12 = a12;
-        this.a20 = a20;
-        this.a21 = a21;
-        this.a22 = a22;
-        this.a30 = a30;
-        this.a31 = a31;
-        this.a32 = a32;
+        this.components[0] = components0;
+        this.components[4] = components4;
+        this.components[8] = components8;
+        this.components[1] = components1;
+        this.components[5] = components5;
+        this.components[9] = components9;
+        this.components[2] = components2;
+        this.components[6] = components6;
+        this.components[10] = components10;
+        this.components[3] = components3;
+        this.components[7] = components7;
+        this.components[11] = components11;
     }
 
     /**
@@ -275,40 +232,40 @@ public class MixinMatrix4f implements Matrix4fExtended {
         long addr = MemoryUtil.memAddress(buf);
 
         Unsafe unsafe = UnsafeUtil.instance();
-        unsafe.putFloat(addr + 0, this.a00);
-        unsafe.putFloat(addr + 4, this.a10);
-        unsafe.putFloat(addr + 8, this.a20);
-        unsafe.putFloat(addr + 12, this.a30);
-        unsafe.putFloat(addr + 16, this.a01);
-        unsafe.putFloat(addr + 20, this.a11);
-        unsafe.putFloat(addr + 24, this.a21);
-        unsafe.putFloat(addr + 28, this.a31);
-        unsafe.putFloat(addr + 32, this.a02);
-        unsafe.putFloat(addr + 36, this.a12);
-        unsafe.putFloat(addr + 40, this.a22);
-        unsafe.putFloat(addr + 44, this.a32);
-        unsafe.putFloat(addr + 48, this.a03);
-        unsafe.putFloat(addr + 52, this.a13);
-        unsafe.putFloat(addr + 56, this.a23);
-        unsafe.putFloat(addr + 60, this.a33);
+        unsafe.putFloat(addr + 0, this.components[0]);
+        unsafe.putFloat(addr + 4, this.components[1]);
+        unsafe.putFloat(addr + 8, this.components[2]);
+        unsafe.putFloat(addr + 12, this.components[3]);
+        unsafe.putFloat(addr + 16, this.components[4]);
+        unsafe.putFloat(addr + 20, this.components[5]);
+        unsafe.putFloat(addr + 24, this.components[6]);
+        unsafe.putFloat(addr + 28, this.components[7]);
+        unsafe.putFloat(addr + 32, this.components[8]);
+        unsafe.putFloat(addr + 36, this.components[9]);
+        unsafe.putFloat(addr + 40, this.components[10]);
+        unsafe.putFloat(addr + 44, this.components[11]);
+        unsafe.putFloat(addr + 48, this.components[12]);
+        unsafe.putFloat(addr + 52, this.components[13]);
+        unsafe.putFloat(addr + 56, this.components[14]);
+        unsafe.putFloat(addr + 60, this.components[15]);
     }
 
     private void writeToBufferSafe(FloatBuffer buf) {
-        buf.put(0, this.a00);
-        buf.put(1, this.a10);
-        buf.put(2, this.a20);
-        buf.put(3, this.a30);
-        buf.put(4, this.a01);
-        buf.put(5, this.a11);
-        buf.put(6, this.a21);
-        buf.put(7, this.a31);
-        buf.put(8, this.a02);
-        buf.put(9, this.a12);
-        buf.put(10, this.a22);
-        buf.put(11, this.a32);
-        buf.put(12, this.a03);
-        buf.put(13, this.a13);
-        buf.put(14, this.a23);
-        buf.put(15, this.a33);
+        buf.put(0, this.components[0]);
+        buf.put(1, this.components[1]);
+        buf.put(2, this.components[2]);
+        buf.put(3, this.components[3]);
+        buf.put(4, this.components[4]);
+        buf.put(5, this.components[5]);
+        buf.put(6, this.components[6]);
+        buf.put(7, this.components[7]);
+        buf.put(8, this.components[8]);
+        buf.put(9, this.components[9]);
+        buf.put(10, this.components[10]);
+        buf.put(11, this.components[11]);
+        buf.put(12, this.components[12]);
+        buf.put(13, this.components[13]);
+        buf.put(14, this.components[14]);
+        buf.put(15, this.components[15]);
     }
 }
