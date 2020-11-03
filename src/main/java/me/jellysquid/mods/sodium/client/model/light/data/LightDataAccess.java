@@ -72,8 +72,8 @@ public abstract class LightDataAccess {
         // FIX: Fluids are always non-translucent despite blocking light, so we need a special check here in order to
         // solve lighting issues underwater.
         boolean op = state.getFluidState() != EMPTY_FLUID_STATE || state.getOpacity(world, pos) == 0;
-        boolean fo = state.isOpaqueFullCube(world, pos);
-        boolean em = state.hasEmissiveLighting(world, pos);
+        boolean fo = state.isFullOpaque(world, pos);
+        boolean em = state.hasEmissiveLighting();
 
         // OPTIMIZE: Do not calculate lightmap data if the block is full and opaque.
         // FIX: Calculate lightmap data for emissive blocks (currently only magma), even though they are full and opaque.

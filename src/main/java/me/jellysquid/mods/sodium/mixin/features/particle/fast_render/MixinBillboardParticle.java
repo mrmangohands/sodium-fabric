@@ -9,10 +9,10 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,7 +34,7 @@ public abstract class MixinBillboardParticle extends Particle {
     @Shadow
     protected abstract float getMaxV();
 
-    protected MixinBillboardParticle(ClientWorld world, double x, double y, double z) {
+    protected MixinBillboardParticle(World world, double x, double y, double z) {
         super(world, x, y, z);
     }
 
@@ -86,10 +86,10 @@ public abstract class MixinBillboardParticle extends Particle {
     private static void addVertex(ParticleVertexSink drain, Quaternion rotation,
                                   float x, float y, float posX, float posY, float posZ, float u, float v, int color, int light, float size) {
         // Quaternion q0 = new Quaternion(rotation);
-        float q0x = rotation.getX();
-        float q0y = rotation.getY();
-        float q0z = rotation.getZ();
-        float q0w = rotation.getW();
+        float q0x = rotation.getB();
+        float q0y = rotation.getC();
+        float q0z = rotation.getD();
+        float q0w = rotation.getA();
 
         // q0.hamiltonProduct(x, y, 0.0f, 0.0f)
         float q1x = (q0w * x) - (q0z * y);
@@ -109,7 +109,7 @@ public abstract class MixinBillboardParticle extends Particle {
         float q3y = q1z * q2y - q1x * q2z + q1y * q2w + q1w * q2x;
         float q3z = q1z * q2z + q1x * q2y - q1y * q2x + q1w * q2w;
 
-        // Vector3f f = new Vector3f(q2.getX(), q2.getY(), q2.getZ())
+        // Vector3f f = new Vector3f(q2.getB(), q2.getC(), q2.getD())
         // f.multiply(size)
         // f.add(pos)
         float fx = (q3x * size) + posX;

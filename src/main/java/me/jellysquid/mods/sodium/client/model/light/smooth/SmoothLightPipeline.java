@@ -65,7 +65,7 @@ public class SmoothLightPipeline implements LightPipeline {
     }
 
     @Override
-    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face, boolean shade) {
+    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face) {
         this.updateCachedData(pos.asLong());
 
         int flags = quad.getFlags();
@@ -79,17 +79,6 @@ public class SmoothLightPipeline implements LightPipeline {
             this.applyAlignedFullFace(neighborInfo, pos, face, out, flags);
         } else {
             this.applyComplex(neighborInfo, quad, pos, face, out, flags);
-        }
-
-        this.applySidedBrightness(out, face, shade);
-    }
-
-    private void applySidedBrightness(QuadLightData out, Direction face, boolean shade) {
-        float brightness = this.lightCache.getWorld().getBrightness(face, shade);
-        float[] br = out.br;
-
-        for (int i = 0; i < br.length; i++) {
-            br[i] *= brightness;
         }
     }
 

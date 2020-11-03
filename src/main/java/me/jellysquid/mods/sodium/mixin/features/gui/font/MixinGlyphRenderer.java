@@ -6,7 +6,7 @@ import me.jellysquid.mods.sodium.client.model.vertex.formats.glyph.GlyphVertexSi
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
 import net.minecraft.client.font.GlyphRenderer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.client.util.math.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;

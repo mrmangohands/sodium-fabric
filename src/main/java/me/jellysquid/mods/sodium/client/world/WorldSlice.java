@@ -9,10 +9,9 @@ import me.jellysquid.mods.sodium.common.util.pool.ReusableObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.util.collection.PackedIntegerArray;
+import net.minecraft.util.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.LightType;
@@ -51,7 +50,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     private static final int NEIGHBOR_BLOCK_RADIUS = 1;
 
     // The radius of chunks around the origin chunk that should be copied.
-    private static final int NEIGHBOR_CHUNK_RADIUS = MathHelper.roundUpToMultiple(NEIGHBOR_BLOCK_RADIUS, 16) >> 4;
+    private static final int NEIGHBOR_CHUNK_RADIUS = MathHelper.roundUp(NEIGHBOR_BLOCK_RADIUS, 16) >> 4;
 
     // The number of blocks on each axis of this slice.
     private static final int BLOCK_LENGTH = SECTION_BLOCK_LENGTH + (NEIGHBOR_BLOCK_RADIUS * 2);
@@ -302,11 +301,6 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     }
 
     @Override
-    public float getBrightness(Direction direction, boolean shaded) {
-        return this.world.getBrightness(direction, shaded);
-    }
-
-    @Override
     public LightingProvider getLightingProvider() {
         return this.world.getLightingProvider();
     }
@@ -354,16 +348,6 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
             default:
                 return 0;
         }
-    }
-
-    @Override
-    public int getBaseLightLevel(BlockPos pos, int ambientDarkness) {
-        return 0;
-    }
-
-    @Override
-    public boolean isSkyVisible(BlockPos pos) {
-        return false;
     }
 
     private int getLightLevel(ChunkNibbleArray[] arrays, BlockPos pos) {

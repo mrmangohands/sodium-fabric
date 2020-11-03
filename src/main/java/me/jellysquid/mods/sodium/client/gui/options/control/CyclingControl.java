@@ -3,7 +3,6 @@ package me.jellysquid.mods.sodium.client.gui.options.control;
 import me.jellysquid.mods.sodium.client.gui.options.Option;
 import me.jellysquid.mods.sodium.client.gui.options.TextProvider;
 import me.jellysquid.mods.sodium.client.util.Dim2i;
-import net.minecraft.client.util.math.MatrixStack;
 import org.apache.commons.lang3.Validate;
 
 public class CyclingControl<T extends Enum<T>> implements Control<T> {
@@ -83,14 +82,14 @@ public class CyclingControl<T extends Enum<T>> implements Control<T> {
         }
 
         @Override
-        public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-            super.render(matrixStack, mouseX, mouseY, delta);
+        public void render(int mouseX, int mouseY, float delta) {
+            super.render(mouseX, mouseY, delta);
 
             Enum<T> value = this.option.getValue();
             String name = this.names[value.ordinal()];
 
             int strWidth = this.getStringWidth(name);
-            this.drawString(matrixStack, name, this.dim.getLimitX() - strWidth - 6, this.dim.getCenterY() - 4, 0xFFFFFFFF);
+            this.drawString(name, this.dim.getLimitX() - strWidth - 6, this.dim.getCenterY() - 4, 0xFFFFFFFF);
         }
 
         @Override

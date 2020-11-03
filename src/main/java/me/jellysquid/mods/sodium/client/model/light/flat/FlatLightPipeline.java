@@ -27,14 +27,15 @@ public class FlatLightPipeline implements LightPipeline {
     }
 
     @Override
-    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face, boolean shade) {
+    public void calculate(ModelQuadView quad, BlockPos pos, QuadLightData out, Direction face) {
+        // No ambient occlusion exists when using flat shading.
+        Arrays.fill(out.br, 1.0f);
+
         // If the face is aligned, use the light data above it
-        if ((quad.getFlags() & ModelQuadFlags.IS_ALIGNED) != 0 && !this.lightCache.getWorld().getBlockState(pos).hasEmissiveLighting(this.lightCache.getWorld(), pos)) {
+        if ((quad.getFlags() & ModelQuadFlags.IS_ALIGNED) != 0 && !this.lightCache.getWorld().getBlockState(pos).hasEmissiveLighting()) {
             Arrays.fill(out.lm, unpackLM(this.lightCache.get(pos, face)));
         } else {
             Arrays.fill(out.lm, unpackLM(this.lightCache.get(pos)));
         }
-
-        Arrays.fill(out.br, this.lightCache.getWorld().getBrightness(face, shade));
     }
 }

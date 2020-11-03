@@ -124,7 +124,7 @@ public class FluidRenderer {
             return false;
         }
 
-        boolean lava = fluidState.isIn(FluidTags.LAVA);
+        boolean lava = fluidState.matches(FluidTags.LAVA);
         Sprite[] sprites = lava ? this.lavaSprites : this.waterSprites;
 
         boolean rendered = false;
@@ -355,7 +355,7 @@ public class FluidRenderer {
 
     private void calculateQuadColors(ModelQuadView quad, BlockRenderView world,  BlockPos pos, LightPipeline lighter, Direction dir, float brightness, boolean colorized) {
         QuadLightData light = this.quadLightData;
-        lighter.calculate(quad, pos, light, dir, false);
+        lighter.calculate(quad, pos, light, dir);
 
         int[] biomeColors = null;
 
