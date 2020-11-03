@@ -39,21 +39,21 @@ public class MixinItemRenderer {
      * @author JellySquid
      */
     @Overwrite
-    private void renderBakedItemModel(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices) {
+    private void method_23182(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices) {
         XoRoShiRoRandom random = this.random;
 
         for (Direction direction : DirectionUtil.ALL_DIRECTIONS) {
             List<BakedQuad> quads = model.getQuads(null, direction, random.setSeedAndReturn(42L));
 
             if (!quads.isEmpty()) {
-                this.renderBakedItemQuads(matrices, vertices, quads, stack, light, overlay);
+                this.method_23180(matrices, vertices, quads, stack, light, overlay);
             }
         }
 
         List<BakedQuad> quads = model.getQuads(null, null, random.setSeedAndReturn(42L));
 
         if (!quads.isEmpty()) {
-            this.renderBakedItemQuads(matrices, vertices, quads, stack, light, overlay);
+            this.method_23180(matrices, vertices, quads, stack, light, overlay);
         }
     }
 
@@ -62,7 +62,7 @@ public class MixinItemRenderer {
      * @author JellySquid
      */
     @Overwrite
-    private void renderBakedItemQuads(MatrixStack matrices, VertexConsumer vertexConsumer, List<BakedQuad> quads, ItemStack stack, int light, int overlay) {
+    private void method_23180(MatrixStack matrices, VertexConsumer vertexConsumer, List<BakedQuad> quads, ItemStack stack, int light, int overlay) {
         MatrixStack.Entry entry = matrices.peek();
 
         ItemColorProvider colorProvider = null;
