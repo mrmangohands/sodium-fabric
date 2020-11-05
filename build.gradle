@@ -5,15 +5,20 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "${project.archives_base_name}-mc${project.minecraft_version}"
-version = project.mod_version
+archivesBaseName = "sodium-${project.minecraft_version}-backport-fabric"
+version = project.mod_version + "-SNAPSHOT"
 group = project.maven_group
 
 def build_release = System.getenv("BUILD_RELEASE") == "true"
 def build_id = System.getenv("BUILD_ID")
+def action = System.getenv("GITHUB_ACTIONS")
 
-if (!build_release) {
-    version += "-SNAPSHOT"
+def getDate() {
+    return new Date().format('yyyy-MM-dd')
+}
+
+if (action != null) {
+    version += "+" + getDate()
 }
 
 if (build_id != null) {
