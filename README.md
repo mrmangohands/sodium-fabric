@@ -1,14 +1,16 @@
 ![Project icon](https://git-assets.jellysquid.me/hotlink-ok/sodium/icon-rounded-128px.png)
 
-# Sodium (for Fabric)
-![GitHub license](https://img.shields.io/github/license/jellysquid3/sodium-fabric.svg)
-![GitHub issues](https://img.shields.io/github/issues/jellysquid3/sodium-fabric.svg)
-![GitHub tag](https://img.shields.io/github/tag/jellysquid3/sodium-fabric.svg)
-[![Discord chat](https://img.shields.io/badge/chat%20on-discord-7289DA)](https://jellysquid.me/discord)
-[![CurseForge downloads](http://cf.way2muchnoise.eu/full_394468_downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/sodium)
+# Sodium Ports (for Fabric)
+![GitHub license](https://img.shields.io/github/license/mrmangohands/sodium-fabric.svg)
+![GitHub issues](https://img.shields.io/github/issues/mrmangohands/sodium-fabric.svg)
+![GitHub tag](https://img.shields.io/github/tag/mrmangohands/sodium-fabric.svg)
 
 Sodium is a free and open-source optimization mod for the Minecraft client that improves frame rates, reduces
 micro-stutter, and fixes graphical issues in Minecraft. 
+
+These are unofficial ports of [JellySquid's original mod](https://github.com/jellysquid3/sodium-fabric) to versions
+that aren't maintained or present upstream. 1.15.2 and 1.16.1 are the current priority, ports for 1.17 snapshots will
+be considered as they're released, and a 1.14 port is not planned.
 
 :warning: Sodium has had a lot of time to shape up lately, but the mod is still alpha software. You may run into small
 graphical issues or crashes while using it. Additionally, the
@@ -17,20 +19,14 @@ or prevent other mods from rendering correctly. Please be aware of these issues 
 
 ### Downloads
 
-You can find downloads for Sodium on either the [official CurseForge page](https://www.curseforge.com/minecraft/mc-mods/sodium)
-or through the [GitHub releases page](https://github.com/jellysquid3/sodium-fabric/releases). Usually, builds will be
-made available on GitHub slightly sooner than other locations.
-
-### Community
-
-If you'd like to get help with the mod, check out the latest developments, or be notified when there's a new release,
-the Discord community might be for you! You can join the official server for my mods by clicking
-[here](https://jellysquid.me/discord).
+You can find downloads on the [GitHub releases page](https://github.com/mrmangohands/sodium-fabric/releases).
 
 ### Building from source
 
 If you're hacking on the code or would like to compile a custom build of Sodium from the latest sources, you'll want
 to start here.
+
+Warning, I will likely be force pushing updates.
 
 #### Prerequisites
 
@@ -67,4 +63,4 @@ guide [here](https://gist.github.com/jellysquid3/8a7b21e57f47f5711eb5697e282e502
 ### License
 
 Sodium is licensed under GNU LGPLv3, a free and open-source license. For more information, please see the
-[license file](https://github.com/jellysquid3/sodium-fabric/blob/1.16.x/dev/LICENSE.txt).
+[license file](https://github.com/mrmangohands/sodium-fabric/blob/1.16.1/stable/LICENSE.txt).
