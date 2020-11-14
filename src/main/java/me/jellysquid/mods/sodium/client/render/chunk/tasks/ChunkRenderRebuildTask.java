@@ -18,10 +18,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
+import net.minecraft.client.render.Vec3d;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.chunk.ChunkOcclusionGraphBuilder;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.chunk.WorldChunk;
@@ -36,7 +36,7 @@ import net.minecraft.world.chunk.WorldChunk;
 public class ChunkRenderRebuildTask<T extends ChunkGraphicsState> extends ChunkRenderBuildTask<T> {
     private final ChunkRenderContainer<T> render;
     private final ChunkBuilder<T> chunkBuilder;
-    private final Vector3d camera;
+    private final Vec3d camera;
     private final WorldSlice slice;
     private final BlockPos offset;
 

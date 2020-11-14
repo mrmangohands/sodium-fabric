@@ -28,7 +28,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
 
     public FallbackQuadSink(VertexConsumer consumer, MatrixStack matrixStack) {
         this.consumer = consumer;
-        this.modelMatrix = matrixStack.peekModel();
+        this.modelMatrix = matrixStack.peek();
         this.normalMatrix = matrixStack.peekNormal();
         this.vector = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         this.normal = new Vector3f(0.0f, 0.0f, 0.0f);
@@ -69,7 +69,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             normVec.set(normX, normY, normZ);
             normVec.multiply(this.normalMatrix);
 
-            this.consumer.vertex((double)posVec.getX(), (double)posVec.getY(), (double)posVec.getZ()).color(r, g, b, a).texture(u, v).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(normVec.getX(), normVec.getY(), normVec.getZ()).next();
+            this.consumer.vertex((double)posVec.getX(), (double)posVec.getY(), (double)posVec.getZ()).color(r, g, b, a).texture(u, v).defaultOverlay(OverlayTexture.DEFAULT_UV).light(light).normal(normVec.getX(), normVec.getY(), normVec.getZ()).next();
         }
     }
 

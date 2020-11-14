@@ -9,7 +9,7 @@ import net.minecraft.client.util.math.Matrix3f;
 import net.minecraft.client.util.math.Matrix4f;
 
 public interface QuadVertexSink extends VertexSink {
-    VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL;
+    VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_UV_NORMAL_2;
 
     /**
      * Writes a quad vertex to this sink.

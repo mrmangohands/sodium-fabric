@@ -5,7 +5,7 @@ import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 
 public interface ParticleVertexSink extends VertexSink {
-    VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_TEXTURE_COLOR_LIGHT;
+    VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_UV_COLOR_LMAP;
 
     /**
      * @param x The x-position of the vertex

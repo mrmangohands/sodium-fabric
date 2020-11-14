@@ -15,7 +15,7 @@ import me.jellysquid.mods.sodium.client.world.biome.BiomeCacheManager;
 import me.jellysquid.mods.sodium.common.util.collections.DequeDrain;
 import me.jellysquid.mods.sodium.common.util.pool.ObjectPool;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.Vector3d;
+import net.minecraft.client.render.Vec3d;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.World;
@@ -49,7 +49,7 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
     private final ObjectPool<WorldSlice> pool;
 
     private World world;
-    private Vector3d cameraPosition;
+    private Vec3d cameraPosition;
     private BiomeCacheManager biomeCacheManager;
     private BlockRenderPassManager renderPassManager;
 
@@ -182,13 +182,13 @@ public class ChunkBuilder<T extends ChunkGraphicsState> {
      * Sets the current camera position of the player used for task prioritization.
      */
     public void setCameraPosition(double x, double y, double z) {
-        this.cameraPosition = new Vector3d(x, y, z);
+        this.cameraPosition = new Vec3d(x, y, z);
     }
 
     /**
      * Returns the current camera position of the player used for task prioritization.
      */
-    public Vector3d getCameraPosition() {
+    public Vec3d getCameraPosition() {
         return this.cameraPosition;
     }
 

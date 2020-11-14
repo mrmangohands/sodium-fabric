@@ -29,8 +29,8 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
 
     @Inject(method = "begin", at = @At("RETURN"))
     public void begin(int drawMode, VertexFormat vertexFormat, CallbackInfo ci) {
-        boolean bl = vertexFormat == VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL;
-        boolean bl2 = vertexFormat == VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL;
+        boolean bl = vertexFormat == VertexFormats.POSITION_UV_NORMAL_2;
+        boolean bl2 = vertexFormat == VertexFormats.POSITION_COLOR_UV_NORMAL;
         this.field_21594 = bl || bl2;
     }
 

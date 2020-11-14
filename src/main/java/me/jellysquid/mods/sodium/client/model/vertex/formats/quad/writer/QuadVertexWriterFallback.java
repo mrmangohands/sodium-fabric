@@ -17,7 +17,7 @@ public class QuadVertexWriterFallback extends VertexWriterFallback implements Qu
         consumer.vertex(x, y, z);
         consumer.color(ColorABGR.unpackRed(color), ColorABGR.unpackGreen(color), ColorABGR.unpackBlue(color), ColorABGR.unpackAlpha(color));
         consumer.texture(u, v);
-        consumer.overlay(overlay);
+        consumer.defaultOverlay(overlay);
         consumer.light(light);
         consumer.normal(Norm3b.unpackX(normal), Norm3b.unpackY(normal), Norm3b.unpackZ(normal));
         consumer.next();

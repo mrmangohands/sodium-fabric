@@ -8,7 +8,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.Matrix4f;
 
 public interface GlyphVertexSink extends VertexSink {
-    VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_COLOR_TEXTURE_LIGHT;
+    VertexFormat VERTEX_FORMAT = VertexFormats.field_20888;
 
     /**
      * Writes a glyph vertex to the sink.

@@ -10,8 +10,8 @@ import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPassManager;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.Vec3d;
 import net.minecraft.client.util.GlAllocationUtils;
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.util.math.BlockPos;
 
 import java.nio.ByteBuffer;
@@ -68,7 +68,7 @@ public class ChunkBuildBuffers {
      * Creates immutable baked chunk meshes from all non-empty scratch buffers and resets the state of all mesh
      * builders. This is used after all blocks have been rendered to pass the finished meshes over to the graphics card.
      */
-    public ChunkMeshData createMesh(Vector3d camera, BlockPos pos, BlockRenderPass pass) {
+    public ChunkMeshData createMesh(Vec3d camera, BlockPos pos, BlockRenderPass pass) {
         ChunkMeshBuilder[] builders = this.buildersByLayer[pass.ordinal()];
 
         ChunkMeshData meshData = new ChunkMeshData();

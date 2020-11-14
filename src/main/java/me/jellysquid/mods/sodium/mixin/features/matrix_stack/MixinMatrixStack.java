@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MatrixStack.class)
 public abstract class MixinMatrixStack {
     @Shadow
-    public abstract Matrix4f peekModel();
+    public abstract Matrix4f peek();
 
     @Shadow
     public abstract Matrix3f peekNormal();
@@ -26,7 +26,7 @@ public abstract class MixinMatrixStack {
      */
     @Overwrite
     public void translate(double x, double y, double z) {
-        Matrix4fExtended mat = MatrixUtil.getExtendedMatrix(this.peekModel());
+        Matrix4fExtended mat = MatrixUtil.getExtendedMatrix(this.peek());
         mat.translate((float) x, (float) y, (float) z);
     }
 
@@ -36,7 +36,7 @@ public abstract class MixinMatrixStack {
      */
     @Overwrite
     public void multiply(Quaternion q) {
-        Matrix4fExtended mat4 = MatrixUtil.getExtendedMatrix(this.peekModel());
+        Matrix4fExtended mat4 = MatrixUtil.getExtendedMatrix(this.peek());
         mat4.rotate(q);
 
         Matrix3fExtended mat3 = MatrixUtil.getExtendedMatrix(this.peekNormal());

@@ -37,7 +37,7 @@ public abstract class AbstractWidget implements Drawable, Element {
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
 
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBufferBuilder();
         bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
 
         consumer.accept(bufferBuilder);

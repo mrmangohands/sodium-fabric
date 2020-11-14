@@ -97,7 +97,7 @@ public class FluidRenderer {
 
             VoxelShape threshold = VoxelShapes.cuboid(0.0D, 0.0D, 0.0D, 1.0D, height, 1.0D);
 
-            return !VoxelShapes.isSideCovered(threshold, shape, dir);
+            return !VoxelShapes.method_1083(threshold, shape, dir);
         }
 
         return true;

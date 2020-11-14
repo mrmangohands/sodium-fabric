@@ -27,7 +27,7 @@ import me.jellysquid.mods.sodium.client.render.chunk.multidraw.ChunkRenderBacken
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.chunk.region.ChunkRegion;
 import me.jellysquid.mods.sodium.client.render.chunk.region.ChunkRegionManager;
-import net.minecraft.util.Util;
+import net.minecraft.util.SystemUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -367,7 +367,7 @@ public class GL43ChunkRenderBackend extends ChunkRenderBackendMultiDraw<LCBGraph
     private static boolean isIntelGpu() {
         // We only care about Windows
         // The open-source drivers on Linux are not known to have driver bugs with multi-draw
-        if (Util.getOperatingSystem() != Util.OperatingSystem.WINDOWS) {
+        if (SystemUtil.getOperatingSystem() != SystemUtil.OperatingSystem.WINDOWS) {
             return false;
         }
 

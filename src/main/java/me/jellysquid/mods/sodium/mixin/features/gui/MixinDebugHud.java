@@ -62,7 +62,7 @@ public abstract class MixinDebugHud {
     }
 
     private void renderStrings(List<String> list, boolean right) {
-        VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
+        LayeredVertexConsumerStorage.Drawer immediate = LayeredVertexConsumerStorage.makeDrawer(Tessellator.getInstance().getBufferBuilder());
 
         for (int i = 0; i < list.size(); ++i) {
             String string = list.get(i);
@@ -74,7 +74,7 @@ public abstract class MixinDebugHud {
                 float x1 = right ? this.client.getWindow().getScaledWidth() - 2 - width : 2;
                 float y1 = 2 + (height * i);
 
-                this.fontRenderer.draw(string, x1, y1, 0xe0e0e0, false, this.modelMatrix, immediate,
+                this.fontRenderer.method_22942(string, x1, y1, 0xe0e0e0, false, this.modelMatrix, immediate,
                         false, 0, 15728880);
             }
         }
@@ -94,7 +94,7 @@ public abstract class MixinDebugHud {
         float h = (float) (color >> 8 & 255) / 255.0F;
         float k = (float) (color & 255) / 255.0F;
 
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().getBufferBuilder();
         bufferBuilder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
 
         for (int i = 0; i < list.size(); ++i) {
