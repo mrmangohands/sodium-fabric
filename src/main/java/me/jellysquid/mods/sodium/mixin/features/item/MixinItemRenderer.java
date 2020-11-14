@@ -16,9 +16,9 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -83,7 +83,7 @@ public class MixinItemRenderer {
             ModelQuadView quad = ((ModelQuadView) bakedQuad);
 
             for (int i = 0; i < 4; i++) {
-                drain.writeQuad(matrices.peek(), matrices.peekNormal(), quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
+                drain.writeQuad(matrices.peek(), matrices.method_23478(), quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
                         light, overlay, ModelQuadUtil.getFacingNormal(bakedQuad.getFace()));
             }
 

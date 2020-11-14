@@ -28,7 +28,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.*;
@@ -295,9 +294,9 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
         }
     }
 
-    public void renderTileEntities(MatrixStack matrices, LayeredBufferBuilderStorage bufferBuilders, Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions,
+    public void renderTileEntities(MatrixStack matrices, LayeredBufferBuilderStorage bufferBuilders, Long2ObjectMap<SortedSet<PartiallyBrokenBlockEntry>> blockBreakingProgressions,
                                    Camera camera, float tickDelta) {
-        LayeredVertexConsumerStorage.Drawer immediate = bufferBuilders.getGeneralDrawer();
+        LayeredVertexConsumerStorage.class_4598 immediate = bufferBuilders.method_23000();
 
         Vec3d cameraPos = camera.getPos();
         double x = cameraPos.getX();
@@ -311,13 +310,13 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
             matrices.translate((double) pos.getX() - x, (double) pos.getY() - y, (double) pos.getZ() - z);
 
             LayeredVertexConsumerStorage consumer = immediate;
-            SortedSet<BlockBreakingInfo> breakingInfos = blockBreakingProgressions.get(pos.asLong());
+            SortedSet<PartiallyBrokenBlockEntry> breakingInfos = blockBreakingProgressions.get(pos.asLong());
 
             if (breakingInfos != null && !breakingInfos.isEmpty()) {
                 int stage = breakingInfos.last().getStage();
 
                 if (stage >= 0) {
-                    VertexConsumer transformer = new MatrixVertexConsumer(bufferBuilders.getBlockBreakingProgressDrawer().getBuffer(RenderLayer.getBlockBreaking(stage)), matrices.peek());
+                    VertexConsumer transformer = new MatrixVertexConsumer(bufferBuilders.method_23001().getBuffer(RenderLayer.getCrumbling(stage)), matrices.peek());
                     consumer = (layer) -> layer.method_23037() ? new DelegatingVertexConsumer(ImmutableList.of(transformer, immediate.getBuffer(layer))) : immediate.getBuffer(layer);
                 }
             }

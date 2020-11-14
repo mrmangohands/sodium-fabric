@@ -7,15 +7,14 @@ import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.QuadVertexSink
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
 import me.jellysquid.mods.sodium.client.util.color.ColorU8;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
+import net.minecraft.client.render.AbstractVertexConsumer;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.FixedColorVertexConsumer;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.util.math.Matrix3f;
 import net.minecraft.client.util.math.Matrix4f;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector4f;
+import net.minecraft.util.math.Matrix3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @SuppressWarnings({ "SameParameterValue" })
 @Mixin(BufferBuilder.class)
-public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
+public abstract class MixinBufferBuilder extends AbstractVertexConsumer {
     private boolean field_21594; // is baked quad format
 
     @Inject(method = "begin", at = @At("RETURN"))
@@ -42,7 +41,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
             return;
         }
 
-        if (this.colorFixed) {
+        if (this.field_20889) {
             throw new IllegalStateException();
         }
 

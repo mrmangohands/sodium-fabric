@@ -54,15 +54,15 @@ public abstract class MixinBillboardParticle extends Particle {
 
         if (this.angle == 0.0F) {
             quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
-            quaternion.hamiltonProduct(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
-            quaternion.hamiltonProduct(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
+            quaternion.copyFrom(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
+            quaternion.copyFrom(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
         } else {
             float angle = MathHelper.lerp(tickDelta, this.prevAngle, this.angle);
 
             quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
-            quaternion.hamiltonProduct(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
-            quaternion.hamiltonProduct(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
-            quaternion.hamiltonProduct(Vector3f.POSITIVE_Z.method_23626(angle));
+            quaternion.copyFrom(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
+            quaternion.copyFrom(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
+            quaternion.copyFrom(Vector3f.POSITIVE_Z.method_23626(angle));
         }
 
         float size = this.getSize(tickDelta);
@@ -90,10 +90,10 @@ public abstract class MixinBillboardParticle extends Particle {
     private static void addVertex(ParticleVertexSink drain, Quaternion rotation,
                                   float x, float y, float posX, float posY, float posZ, float u, float v, int color, int light, float size) {
         // Quaternion q0 = new Quaternion(rotation);
-        float q0x = rotation.getB();
-        float q0y = rotation.getC();
-        float q0z = rotation.getD();
-        float q0w = rotation.getA();
+        float q0x = rotation.getX();
+        float q0y = rotation.getY();
+        float q0z = rotation.getZ();
+        float q0w = rotation.getW();
 
         // q0.hamiltonProduct(x, y, 0.0f, 0.0f)
         float q1x = (q0w * x) - (q0z * y);

@@ -1,9 +1,9 @@
 package me.jellysquid.mods.sodium.client.util.math;
 
 import me.jellysquid.mods.sodium.client.util.Norm3b;
-import net.minecraft.client.util.math.Matrix3f;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Matrix3f;
 
 @SuppressWarnings("ConstantConditions")
 public class MatrixUtil {

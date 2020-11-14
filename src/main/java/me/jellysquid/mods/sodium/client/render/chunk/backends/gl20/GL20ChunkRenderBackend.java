@@ -5,7 +5,7 @@ import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.gl.util.MemoryTracker;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
 import me.jellysquid.mods.sodium.client.render.chunk.oneshot.ChunkRenderBackendOneshot;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MatrixStack;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 

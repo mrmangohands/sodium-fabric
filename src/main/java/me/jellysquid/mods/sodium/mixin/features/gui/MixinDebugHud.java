@@ -2,12 +2,12 @@ package me.jellysquid.mods.sodium.mixin.features.gui;
 
 import com.google.common.base.Strings;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.class_4590;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.Matrix4f;
-import net.minecraft.client.util.math.Rotation3;
 import org.apache.commons.lang3.Validate;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Final;
@@ -32,7 +32,7 @@ public abstract class MixinDebugHud {
 
     private List<String> capturedList = null;
 
-    private static final Matrix4f modelMatrix = Rotation3.identity().getMatrix();
+    private static final Matrix4f modelMatrix = class_4590.method_22931().method_22936();
 
     @Redirect(method = { "renderLeftText", "renderRightText" }, at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"))
     private int preRenderText(List<String> list) {
@@ -62,7 +62,7 @@ public abstract class MixinDebugHud {
     }
 
     private void renderStrings(List<String> list, boolean right) {
-        LayeredVertexConsumerStorage.Drawer immediate = LayeredVertexConsumerStorage.makeDrawer(Tessellator.getInstance().getBufferBuilder());
+        LayeredVertexConsumerStorage.class_4598 immediate = LayeredVertexConsumerStorage.method_22991(Tessellator.getInstance().getBufferBuilder());
 
         for (int i = 0; i < list.size(); ++i) {
             String string = list.get(i);
@@ -79,7 +79,7 @@ public abstract class MixinDebugHud {
             }
         }
 
-        immediate.draw();
+        immediate.method_22993();
     }
 
     private void renderBackdrop(List<String> list, boolean right) {

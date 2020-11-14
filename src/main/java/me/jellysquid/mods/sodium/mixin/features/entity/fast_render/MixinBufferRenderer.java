@@ -19,7 +19,7 @@ public class MixinBufferRenderer {
      * @reason Avoid client side memory to speed up rendering
      */
     @Overwrite
-    private static void draw(ByteBuffer buffer, int mode, VertexFormat vertexFormat, int count) {
+    private static void method_22639(ByteBuffer buffer, int mode, VertexFormat vertexFormat, int count) {
         buffer.clear();
 
         if (count <= 0) {
@@ -34,11 +34,11 @@ public class MixinBufferRenderer {
         glBuffer.bind(GL15.GL_ARRAY_BUFFER);
         glBuffer.upload(GL15.GL_ARRAY_BUFFER, buffer);
 
-        vertexFormat.startDrawing(0L);
+        vertexFormat.method_22649(0L);
 
         GlStateManager.drawArrays(mode, 0, count);
 
-        vertexFormat.endDrawing();
+        vertexFormat.method_22651();
 
         glBuffer.invalidate(GL15.GL_ARRAY_BUFFER);
         glBuffer.unbind(GL15.GL_ARRAY_BUFFER);

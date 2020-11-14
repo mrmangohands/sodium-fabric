@@ -9,6 +9,8 @@ import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.*;
+import net.minecraft.util.math.Matrix3f;
+import net.minecraft.util.math.MatrixStack;
 
 /**
  * A fallback implementation of {@link ModelQuadSink} for when we're writing into an arbitrary {@link BufferBuilder}.
@@ -29,7 +31,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
     public FallbackQuadSink(VertexConsumer consumer, MatrixStack matrixStack) {
         this.consumer = consumer;
         this.modelMatrix = matrixStack.peek();
-        this.normalMatrix = matrixStack.peekNormal();
+        this.normalMatrix = matrixStack.method_23478();
         this.vector = new Vector4f(0.0f, 0.0f, 0.0f, 1.0f);
         this.normal = new Vector3f(0.0f, 0.0f, 0.0f);
     }
@@ -69,7 +71,7 @@ public class FallbackQuadSink implements ModelQuadSink, ModelQuadSinkDelegate {
             normVec.set(normX, normY, normZ);
             normVec.multiply(this.normalMatrix);
 
-            this.consumer.vertex((double)posVec.getX(), (double)posVec.getY(), (double)posVec.getZ()).color(r, g, b, a).texture(u, v).defaultOverlay(OverlayTexture.DEFAULT_UV).light(light).normal(normVec.getX(), normVec.getY(), normVec.getZ()).next();
+            this.consumer.vertex((double)posVec.getX(), (double)posVec.getY(), (double)posVec.getZ()).color(r, g, b, a).texture(u, v).defaultOverlay(OverlayTexture.field_21444).light(light).normal(normVec.getX(), normVec.getY(), normVec.getZ()).next();
         }
     }
 

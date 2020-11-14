@@ -1,8 +1,8 @@
 package me.jellysquid.mods.sodium.mixin.features.buffer_builder.fast_advance;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.render.AbstractVertexConsumer;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.FixedColorVertexConsumer;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormatElement;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(BufferBuilder.class)
-public abstract class MixinBufferBuilder extends FixedColorVertexConsumer  {
+public abstract class MixinBufferBuilder extends AbstractVertexConsumer  {
     @Shadow
     private VertexFormat format;
 
@@ -18,7 +18,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer  {
     private VertexFormatElement currentElement;
 
     @Shadow
-    private int elementOffset;
+    private int field_20884;
 
     @Shadow
     private int currentElementId;
@@ -32,7 +32,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer  {
         ImmutableList<VertexFormatElement> elements = this.format.getElements();
 
         do {
-            this.elementOffset += this.currentElement.getSize();
+            this.field_20884 += this.currentElement.getSize();
 
             // Wrap around the element pointer without using modulo
             if (++this.currentElementId >= elements.size()) {
@@ -42,8 +42,8 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer  {
             this.currentElement = elements.get(this.currentElementId);
         } while (this.currentElement.getType() == VertexFormatElement.Type.PADDING);
 
-        if (this.colorFixed && this.currentElement.getType() == VertexFormatElement.Type.COLOR) {
-            this.color(this.fixedRed, this.fixedGreen, this.fixedBlue, this.fixedAlpha);
+        if (this.field_20889 && this.currentElement.getType() == VertexFormatElement.Type.COLOR) {
+            this.color(this.field_20890, this.field_20891, this.field_20892, this.field_20893);
         }
     }
 }

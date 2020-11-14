@@ -25,10 +25,10 @@ public enum BlockRenderPass {
     }
 
     public void endDrawing() {
-        this.layer.endDrawing();
+        this.layer.method_23518();
     }
 
     public void startDrawing() {
-        this.layer.startDrawing();
+        this.layer.method_23516();
     }
 }

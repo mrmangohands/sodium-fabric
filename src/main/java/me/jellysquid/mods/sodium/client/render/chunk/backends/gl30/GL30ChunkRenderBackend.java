@@ -6,7 +6,7 @@ import me.jellysquid.mods.sodium.client.gl.func.GlFunctions;
 import me.jellysquid.mods.sodium.client.gl.util.MemoryTracker;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
 import me.jellysquid.mods.sodium.client.render.chunk.oneshot.ChunkRenderBackendOneshot;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MatrixStack;
 
 /**
  * Shader-based render backend for chunks which uses VAOs to avoid the overhead in setting up vertex attribute pointers

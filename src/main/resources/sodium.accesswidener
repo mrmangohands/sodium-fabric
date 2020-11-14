@@ -9,7 +9,7 @@ accessible field net/minecraft/client/util/math/MatrixStack$Entry modelMatrix Ln
 accessible field net/minecraft/client/util/math/MatrixStack$Entry normalMatrix Lnet/minecraft/client/util/math/Matrix3f;
 
 accessible method net/minecraft/client/texture/Sprite$class_4728 method_24128 ()V
-accessible method net/minecraft/client/render/Frustum isVisible (DDDDDD)Z
+accessible method net/minecraft/client/render/Frustum method_23089 (DDDDDD)Z
 
 accessible field net/minecraft/world/chunk/PalettedContainer data Lnet/minecraft/util/PackedIntegerArray;
 accessible field net/minecraft/world/chunk/PalettedContainer palette Lnet/minecraft/world/chunk/Palette;

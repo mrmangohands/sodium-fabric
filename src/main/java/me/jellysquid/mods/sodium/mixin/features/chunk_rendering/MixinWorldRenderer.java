@@ -5,10 +5,9 @@ import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.options.GameOptions;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.Matrix4f;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -24,11 +23,11 @@ import java.util.SortedSet;
 public abstract class MixinWorldRenderer {
     @Shadow
     @Final
-    private LayeredBufferBuilderStorage layeredBufferBuilderStorage;
+    private LayeredBufferBuilderStorage field_20951;
 
     @Shadow
     @Final
-    private Long2ObjectMap<SortedSet<BlockBreakingInfo>> blockBreakingProgressions;
+    private Long2ObjectMap<SortedSet<PartiallyBrokenBlockEntry>> field_20950;
 
     private SodiumWorldRenderer renderer;
 
@@ -132,7 +131,7 @@ public abstract class MixinWorldRenderer {
 
     @Inject(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/render/WorldRenderer;blockEntities:Ljava/util/Set;", shift = At.Shift.BEFORE, ordinal = 0))
     private void onRenderTileEntities(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, CallbackInfo ci) {
-        this.renderer.renderTileEntities(matrices, this.layeredBufferBuilderStorage, this.blockBreakingProgressions, camera, tickDelta);
+        this.renderer.renderTileEntities(matrices, this.field_20951, this.field_20950, camera, tickDelta);
     }
 
     /**

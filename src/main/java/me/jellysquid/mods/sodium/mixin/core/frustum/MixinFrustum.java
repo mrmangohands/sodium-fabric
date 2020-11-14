@@ -22,18 +22,18 @@ public class MixinFrustum implements FrustumExtended {
     private float nzX, nzY, nzZ, nzW;
     private float pzX, pzY, pzZ, pzW;
 
-    @Inject(method = "setPosition", at = @At("HEAD"))
+    @Inject(method = "method_23088", at = @At("HEAD"))
     private void prePositionUpdate(double cameraX, double cameraY, double cameraZ, CallbackInfo ci) {
         this.xF = (float) cameraX;
         this.yF = (float) cameraY;
         this.zF = (float) cameraZ;
     }
 
-    @Inject(method = "transform", at = @At("HEAD"))
+    @Inject(method = "method_23091", at = @At("HEAD"))
     private void transform(Matrix4f mat, int x, int y, int z, int index, CallbackInfo ci) {
         Vector4f vec = new Vector4f((float) x, (float) y, (float) z, 1.0F);
         vec.multiply(mat);
-        vec.normalize();
+        vec.method_23218();
 
         switch (index) {
             case 0:
@@ -79,7 +79,7 @@ public class MixinFrustum implements FrustumExtended {
 
     @Override
     public boolean fastAabbTest(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
-        return this.isAnyCornerVisible(minX - this.xF, minY - this.yF, minZ - this.zF,
+        return this.method_23090(minX - this.xF, minY - this.yF, minZ - this.zF,
                 maxX - this.xF, maxY - this.yF, maxZ - this.zF);
     }
 
@@ -88,7 +88,7 @@ public class MixinFrustum implements FrustumExtended {
      * @reason Optimize away object allocations and for-loop
      */
     @Overwrite
-    private boolean isAnyCornerVisible(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
+    private boolean method_23090(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
         return this.nxX * (this.nxX < 0 ? minX : maxX) + this.nxY * (this.nxY < 0 ? minY : maxY) + this.nxZ * (this.nxZ < 0 ? minZ : maxZ) >= -this.nxW &&
                 this.pxX * (this.pxX < 0 ? minX : maxX) + this.pxY * (this.pxY < 0 ? minY : maxY) + this.pxZ * (this.pxZ < 0 ? minZ : maxZ) >= -this.pxW &&
                 this.nyX * (this.nyX < 0 ? minX : maxX) + this.nyY * (this.nyY < 0 ? minY : maxY) + this.nyZ * (this.nyZ < 0 ? minZ : maxZ) >= -this.nyW &&

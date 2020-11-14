@@ -25,7 +25,7 @@ public class MixinBufferBuilder {
     private VertexFormat format;
 
     @Shadow
-    private int buildStart;
+    private int field_20776;
 
     /**
      * @reason Reduce allocations, use stack allocations, avoid unnecessary math and pointer bumping, inline comparators
@@ -39,7 +39,7 @@ public class MixinBufferBuilder {
         int vertexStride = this.format.getVertexSize();
         int quadStride = this.format.getVertexSizeInteger() * 4;
 
-        int quadStart = this.buildStart / 4;
+        int quadStart = this.field_20776 / 4;
         int quadCount = this.vertexCount / 4;
         int vertexSizeInteger = this.format.getVertexSizeInteger();
 
