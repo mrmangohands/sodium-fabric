@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -97,7 +98,7 @@ public class SodiumChunkManager extends ClientChunkManager implements ChunkStatu
     }
 
     @Override
-    public WorldChunk loadChunkFromPacket(int x, int z, BiomeArray biomes, PacketByteBuf buf, CompoundTag tag, int flag) {
+    public WorldChunk loadChunkFromPacket(World world, int x, int z, BiomeArray biomes, PacketByteBuf buf, CompoundTag tag, int flag) {
         long key = createChunkKey(x, z);
 
         WorldChunk chunk = this.chunks.get(key);
@@ -191,9 +192,6 @@ public class SodiumChunkManager extends ClientChunkManager implements ChunkStatu
         for (int y = 0; y < sections.length; ++y) {
             lightEngine.updateSectionStatus(ChunkSectionPos.from(x, y, z), ChunkSection.isEmpty(sections[y]));
         }
-
-        // Sodium doesn't actually use vanilla's global color cache, but we keep it around for compatibility purposes
-        this.world.resetChunkColor(x, z);
 
         // Notify the chunk listener
         if (this.listener != null) {

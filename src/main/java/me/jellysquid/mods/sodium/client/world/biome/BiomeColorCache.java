@@ -5,7 +5,8 @@ import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.world.level.ColorResolver;
+// FIXME
+/*import net.minecraft.world.level.ColorResolver;
 
 import java.util.Arrays;
 
@@ -99,3 +100,4 @@ public class BiomeColorCache {
         return this.resolver.getColor(this.slice.getCachedBiome(x, z), x, z);
     }
 }
+*/

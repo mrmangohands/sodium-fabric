@@ -4,6 +4,10 @@ accessible class net/minecraft/client/model/ModelPart$Vertex
 accessible class net/minecraft/client/model/ModelPart$Quad
 accessible class net/minecraft/client/texture/Sprite$class_4728
 
+accessible class net/minecraft/client/util/math/MatrixStack$Entry
+accessible field net/minecraft/client/util/math/MatrixStack$Entry modelMatrix Lnet/minecraft/client/util/math/Matrix4f;
+accessible field net/minecraft/client/util/math/MatrixStack$Entry normalMatrix Lnet/minecraft/client/util/math/Matrix3f;
+
 accessible method net/minecraft/client/texture/Sprite$class_4728 method_24128 ()V
 accessible method net/minecraft/client/render/Frustum isVisible (DDDDDD)Z
 

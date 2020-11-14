@@ -7,9 +7,9 @@ import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.texture.SpriteUtil;
 import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Vec3d;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.CompletableFuture;
@@ -211,7 +211,7 @@ public class ChunkRenderContainer<T extends ChunkGraphicsState> {
     /**
      * @return The squared distance from the center of this chunk in the world to the given plane
      */
-    public double getSquaredDepth(double x, double y, double z, Vector3f cameraHorizontalPlane) {
+    public double getSquaredDepth(double x, double y, double z, Vec3d cameraHorizontalPlane) {
         // Calculate dot product, no need to worry about norm for direction vector
         double xComponent = (this.getCenterX() - x) * cameraHorizontalPlane.getX();
         double yComponent = (this.getCenterY() - y) * cameraHorizontalPlane.getY();

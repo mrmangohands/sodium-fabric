@@ -30,7 +30,6 @@ import me.jellysquid.mods.sodium.common.util.collections.FutureDequeDrain;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
@@ -84,7 +83,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     private final boolean useChunkFaceCulling;
 
     private float cameraX, cameraY, cameraZ;
-    private Vector3f cameraVector;
+    private Vec3d cameraVector;
     private boolean dirty;
 
     private int visibleChunkCount;

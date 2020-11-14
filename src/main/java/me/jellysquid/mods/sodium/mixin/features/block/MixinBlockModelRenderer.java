@@ -17,6 +17,8 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
+import net.minecraft.client.util.math.Matrix3f;
+import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -50,7 +52,7 @@ public class MixinBlockModelRenderer {
      * @author JellySquid
      */
     @Overwrite
-    public void render(MatrixStack.Entry entry, VertexConsumer vertexConsumer, BlockState blockState, BakedModel bakedModel, float red, float green, float blue, int light, int overlay) {
+    public void render(Matrix4f matrix4f, Matrix3f matrix3f, VertexConsumer vertexConsumer, BlockState blockState, BakedModel bakedModel, float red, float green, float blue, int light, int overlay) {
         QuadVertexSink drain = VertexDrain.of(vertexConsumer)
                 .createSink(DefaultVertexTypes.QUADS);
         XoRoShiRoRandom random = this.random;
@@ -66,20 +68,20 @@ public class MixinBlockModelRenderer {
             List<BakedQuad> quads = bakedModel.getQuads(blockState, direction, random.setSeedAndReturn(42L));
 
             if (!quads.isEmpty()) {
-                renderQuad(entry, drain, defaultColor, quads, light, overlay);
+                renderQuad(matrix4f, matrix3f, drain, defaultColor, quads, light, overlay);
             }
         }
 
         List<BakedQuad> quads = bakedModel.getQuads(blockState, null, random.setSeedAndReturn(42L));
 
         if (!quads.isEmpty()) {
-            renderQuad(entry, drain, defaultColor, quads, light, overlay);
+            renderQuad(matrix4f, matrix3f, drain, defaultColor, quads, light, overlay);
         }
 
         drain.flush();
     }
 
-    private static void renderQuad(MatrixStack.Entry entry, QuadVertexSink drain, int defaultColor, List<BakedQuad> list, int light, int overlay) {
+    private static void renderQuad(Matrix4f matrix4f, Matrix3f matrix3f, QuadVertexSink drain, int defaultColor, List<BakedQuad> list, int light, int overlay) {
         if (list.isEmpty()) {
             return;
         }
@@ -92,7 +94,7 @@ public class MixinBlockModelRenderer {
             ModelQuadView quad = ((ModelQuadView) bakedQuad);
 
             for (int i = 0; i < 4; i++) {
-                drain.writeQuad(entry, quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
+                drain.writeQuad(matrix4f, matrix3f, quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
                         light, overlay, ModelQuadUtil.getFacingNormal(bakedQuad.getFace()));
             }
 

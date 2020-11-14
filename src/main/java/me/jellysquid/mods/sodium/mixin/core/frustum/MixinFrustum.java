@@ -1,6 +1,7 @@
 package me.jellysquid.mods.sodium.mixin.core.frustum;
 
 import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
+import me.jellysquid.mods.sodium.client.util.math.Vector4fExtended;
 import net.minecraft.client.render.Frustum;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector4f;
@@ -39,37 +40,37 @@ public class MixinFrustum implements FrustumExtended {
                 this.nxX = vec.getX();
                 this.nxY = vec.getY();
                 this.nxZ = vec.getZ();
-                this.nxW = vec.method_23853();
+                this.nxW = ((Vector4fExtended)vec).getW();
                 break;
             case 1:
                 this.pxX = vec.getX();
                 this.pxY = vec.getY();
                 this.pxZ = vec.getZ();
-                this.pxW = vec.method_23853();
+                this.pxW = ((Vector4fExtended)vec).getW();
                 break;
             case 2:
                 this.nyX = vec.getX();
                 this.nyY = vec.getY();
                 this.nyZ = vec.getZ();
-                this.nyW = vec.method_23853();
+                this.nyW = ((Vector4fExtended)vec).getW();
                 break;
             case 3:
                 this.pyX = vec.getX();
                 this.pyY = vec.getY();
                 this.pyZ = vec.getZ();
-                this.pyW = vec.method_23853();
+                this.pyW = ((Vector4fExtended)vec).getW();
                 break;
             case 4:
                 this.nzX = vec.getX();
                 this.nzY = vec.getY();
                 this.nzZ = vec.getZ();
-                this.nzW = vec.method_23853();
+                this.nzW = ((Vector4fExtended)vec).getW();
                 break;
             case 5:
                 this.pzX = vec.getX();
                 this.pzY = vec.getY();
                 this.pzZ = vec.getZ();
-                this.pzW = vec.method_23853();
+                this.pzW = ((Vector4fExtended)vec).getW();
                 break;
             default:
                 throw new IllegalArgumentException("Invalid index");

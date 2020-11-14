@@ -63,8 +63,6 @@ public class MixinItemRenderer {
      */
     @Overwrite
     private void method_23180(MatrixStack matrices, VertexConsumer vertexConsumer, List<BakedQuad> quads, ItemStack stack, int light, int overlay) {
-        MatrixStack.Entry entry = matrices.peek();
-
         ItemColorProvider colorProvider = null;
 
         QuadVertexSink drain = VertexDrain.of(vertexConsumer)
@@ -85,7 +83,7 @@ public class MixinItemRenderer {
             ModelQuadView quad = ((ModelQuadView) bakedQuad);
 
             for (int i = 0; i < 4; i++) {
-                drain.writeQuad(entry, quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
+                drain.writeQuad(matrices.peekModel(), matrices.peekNormal(), quad.getX(i), quad.getY(i), quad.getZ(i), color, quad.getTexU(i), quad.getTexV(i),
                         light, overlay, ModelQuadUtil.getFacingNormal(bakedQuad.getFace()));
             }
 

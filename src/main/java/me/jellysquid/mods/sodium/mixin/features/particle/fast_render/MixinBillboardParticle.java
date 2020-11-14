@@ -43,7 +43,7 @@ public abstract class MixinBillboardParticle extends Particle {
      * @author JellySquid
      */
     @Overwrite
-    public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
+    public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta, float f, float g, float h, float i, float j) {
         Vec3d vec3d = camera.getPos();
 
         float x = (float) (MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
@@ -53,11 +53,15 @@ public abstract class MixinBillboardParticle extends Particle {
         Quaternion quaternion;
 
         if (this.angle == 0.0F) {
-            quaternion = camera.method_23767();
+            quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
+            quaternion.hamiltonProduct(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
+            quaternion.hamiltonProduct(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
         } else {
             float angle = MathHelper.lerp(tickDelta, this.prevAngle, this.angle);
 
-            quaternion = new Quaternion(camera.method_23767());
+            quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
+            quaternion.hamiltonProduct(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw()));
+            quaternion.hamiltonProduct(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch()));
             quaternion.hamiltonProduct(Vector3f.POSITIVE_Z.method_23626(angle));
         }
 

@@ -34,7 +34,7 @@ public class MixinParticleManager {
     private Frustum cullingFrustum;
 
     @Inject(method = "renderParticles", at = @At("HEAD"))
-    private void preRenderParticles(MatrixStack matrixStack, VertexConsumerProvider.Immediate immediate, LightmapTextureManager lightmapTextureManager, Camera camera, float f, CallbackInfo ci) {
+    private void preRenderParticles(Camera camera, float f, CallbackInfo ci) {
         Frustum frustum = SodiumWorldRenderer.getInstance().getFrustum();
         boolean useCulling = SodiumClientMod.options().advanced.useParticleCulling;
 
@@ -48,7 +48,7 @@ public class MixinParticleManager {
 
     @SuppressWarnings({ "SuspiciousMethodCalls", "unchecked" })
     @Redirect(method = "renderParticles", at = @At(value = "INVOKE", target = "Ljava/util/Map;get(Ljava/lang/Object;)Ljava/lang/Object;"))
-    private <V> V filterParticleList(Map<ParticleTextureSheet, Queue<Particle>> map, Object key, MatrixStack matrixStack, VertexConsumerProvider.Immediate immediate, LightmapTextureManager lightmapTextureManager, Camera camera, float f) {
+    private <V> V filterParticleList(Map<ParticleTextureSheet, Queue<Particle>> map, Object key, Camera camera, float f) {
         Queue<Particle> queue = this.particles.get(key);
 
         if (queue == null || queue.isEmpty()) {
@@ -77,7 +77,7 @@ public class MixinParticleManager {
     }
 
     @Inject(method = "renderParticles", at = @At("RETURN"))
-    private void postRenderParticles(MatrixStack matrixStack, VertexConsumerProvider.Immediate immediate, LightmapTextureManager lightmapTextureManager, Camera camera, float f, CallbackInfo ci) {
+    private void postRenderParticles(Camera camera, float f, CallbackInfo ci) {
         // Ensure particles don't linger in the temporary collection
         this.cachedQueue.clear();
     }

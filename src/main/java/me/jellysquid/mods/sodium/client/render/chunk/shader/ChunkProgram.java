@@ -54,8 +54,6 @@ public abstract class ChunkProgram extends GlProgram {
 
         this.fogShader.setup();
 
-        MatrixStack.Entry matrices = matrixStack.peek();
-
         // Since vanilla doesn't expose the projection matrix anywhere, we need to grab it from the OpenGL state
         // This isn't super fast, but should be sufficient enough to remain compatible with any state modifying code
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -64,7 +62,7 @@ public abstract class ChunkProgram extends GlProgram {
             FloatBuffer bufModelViewProjection = stack.mallocFloat(16);
 
             GL15.glGetFloatv(GL15.GL_PROJECTION_MATRIX, bufProjection);
-            matrices.getModel().writeToBuffer(bufModelView);
+            matrixStack.peekModel().writeToBuffer(bufModelView);
 
             GL11.glPushMatrix();
             GL11.glLoadMatrixf(bufProjection);

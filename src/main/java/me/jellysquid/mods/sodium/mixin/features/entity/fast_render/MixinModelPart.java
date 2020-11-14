@@ -12,6 +12,8 @@ import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.util.math.Matrix3f;
+import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Vec3d;
@@ -25,8 +27,6 @@ import java.util.List;
 
 @Mixin(ModelPart.class)
 public class MixinModelPart {
-    private static final float NORM = 1.0F / 16.0F;
-
     @Shadow
     @Final
     private List<ModelPart.Cuboid> cuboids;
@@ -36,9 +36,10 @@ public class MixinModelPart {
      * @reason Use optimized vertex writer, avoid allocations, use quick matrix transformations
      */
     @Overwrite
-    private void renderCuboids(MatrixStack.Entry matrices, VertexConsumer vertexConsumer, int light, int overlay, @Nullable Sprite sprite, float red, float green, float blue) {
-        Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.getNormal());
-        Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrices.getModel());
+    private void renderCuboids(Matrix4f matrix4f, VertexConsumer vertexConsumer, float pivotDistance, int light, int overlay, @Nullable Sprite sprite, float red, float green, float blue) {
+        //Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.method_23762());
+        Matrix3f matrix3f = new Matrix3f(matrix4f);
+        Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrix4f);
 
         QuadVertexSink drain = VertexDrain.of(vertexConsumer).createSink(DefaultVertexTypes.QUADS);
         drain.ensureCapacity(this.cuboids.size() * 6 * 4);
@@ -53,8 +54,8 @@ public class MixinModelPart {
                 //19w46a -> 19w45b
                 Vector3f vector3f = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[0].pos));
                 Vector3f vector3f2 = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[2].pos));
-                vector3f.multiply(matrices.getNormal());
-                vector3f2.multiply(matrices.getNormal());
+                vector3f.multiply(matrix3f);
+                vector3f2.multiply(matrix3f);
                 vector3f2.cross(vector3f);
                 vector3f2.reciprocal();
                 float normX = vector3f2.getX();
@@ -70,9 +71,9 @@ public class MixinModelPart {
                 for (ModelPart.Vertex vertex : quad.vertices) {
                     Vec3d pos = vertex.pos;
 
-                    float x1 = (float)pos.getX() * NORM;
-                    float y1 = (float)pos.getY() * NORM;
-                    float z1 = (float)pos.getZ() * NORM;
+                    float x1 = (float)pos.getX() * pivotDistance;
+                    float y1 = (float)pos.getY() * pivotDistance;
+                    float z1 = (float)pos.getZ() * pivotDistance;
 
                     float x2 = modelExt.transformVecX(x1, y1, z1);
                     float y2 = modelExt.transformVecY(x1, y1, z1);

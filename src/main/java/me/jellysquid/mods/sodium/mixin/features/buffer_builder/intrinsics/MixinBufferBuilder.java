@@ -35,9 +35,9 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
     }
 
     @Override
-    public void quad(MatrixStack.Entry matrices, BakedQuad quad, float[] brightnessTable, float r, float g, float b, int[] light, int overlay, boolean colorize) {
+    public void quad(Matrix4f matrix4f, Matrix3f matrix3f, BakedQuad quad, float[] brightnessTable, float r, float g, float b, int[] light, int overlay, boolean colorize) {
         if (!this.field_21594) {
-            super.quad(matrices, quad, brightnessTable, r, g, b, light, overlay, colorize);
+            super.quad(matrix4f, matrix3f, quad, brightnessTable, r, g, b, light, overlay, colorize);
 
             return;
         }
@@ -48,10 +48,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
 
         ModelQuadView quadView = (ModelQuadView) quad;
 
-        Matrix4f modelMatrix = matrices.getModel();
-        Matrix3f normalMatrix = matrices.getNormal();
-
-        int norm = MatrixUtil.computeNormal(normalMatrix, quad.getFace());
+        int norm = MatrixUtil.computeNormal(matrix3f, quad.getFace());
 
         QuadVertexSink drain = VertexDrain.of(this)
                 .createSink(DefaultVertexTypes.QUADS);
@@ -90,7 +87,7 @@ public abstract class MixinBufferBuilder extends FixedColorVertexConsumer {
             int color = ColorABGR.pack(fR, fG, fB, 1.0F);
 
             Vector4f pos = new Vector4f(x, y, z, 1.0F);
-            pos.multiply(modelMatrix);
+            pos.multiply(matrix4f);
 
             drain.writeQuad(pos.getX(), pos.getY(), pos.getZ(), color, u, v, light[i], overlay, norm);
         }
