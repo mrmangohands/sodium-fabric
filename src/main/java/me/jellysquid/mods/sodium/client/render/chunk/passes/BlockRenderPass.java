@@ -4,10 +4,10 @@ import net.minecraft.client.render.RenderLayer;
 
 // TODO: Move away from using an enum, make this extensible
 public enum BlockRenderPass {
-    SOLID(RenderLayer.getSolid(), false),
-    CUTOUT(RenderLayer.getCutout(), false),
-    CUTOUT_MIPPED(RenderLayer.getCutoutMipped(), false),
-    TRANSLUCENT(RenderLayer.getTranslucent(), true);
+    SOLID(RenderLayer.SOLID, false),
+    CUTOUT(RenderLayer.CUTOUT, false),
+    CUTOUT_MIPPED(RenderLayer.CUTOUT_MIPPED, false),
+    TRANSLUCENT(RenderLayer.TRANSLUCENT, true);
 
     public static final BlockRenderPass[] VALUES = BlockRenderPass.values();
     public static final int COUNT = VALUES.length;
@@ -25,10 +25,10 @@ public enum BlockRenderPass {
     }
 
     public void endDrawing() {
-        this.layer.method_23518();
+        this.layer.end();
     }
 
     public void startDrawing() {
-        this.layer.method_23516();
+        this.layer.begin();
     }
 }

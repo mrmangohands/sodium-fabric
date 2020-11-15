@@ -14,6 +14,7 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector4f;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -34,9 +35,9 @@ public abstract class MixinBufferBuilder extends AbstractVertexConsumer {
     }
 
     @Override
-    public void quad(Matrix4f matrix4f, Matrix3f matrix3f, BakedQuad quad, float[] brightnessTable, float r, float g, float b, int[] light, int overlay, boolean colorize) {
+    public void quad(Matrix4f matrix4f, BakedQuad quad, float[] brightnessTable, float r, float g, float b, int[] light, boolean colorize) {
         if (!this.field_21594) {
-            super.quad(matrix4f, matrix3f, quad, brightnessTable, r, g, b, light, overlay, colorize);
+            super.quad(matrix4f, quad, brightnessTable, r, g, b, light, colorize);
 
             return;
         }
@@ -46,6 +47,14 @@ public abstract class MixinBufferBuilder extends AbstractVertexConsumer {
         }
 
         ModelQuadView quadView = (ModelQuadView) quad;
+
+        Matrix3f matrix3f = new Matrix3f(matrix4f);
+        matrix3f.transpose();
+        float f = matrix3f.determinantAndAdjugate();
+        if (!(f < 1.0E-5F)) {
+           float f2 = matrix3f.determinant();
+           matrix3f.multiply(MathHelper.fastInverseCbrt(f2));
+        }
 
         int norm = MatrixUtil.computeNormal(matrix3f, quad.getFace());
 
@@ -88,7 +97,7 @@ public abstract class MixinBufferBuilder extends AbstractVertexConsumer {
             Vector4f pos = new Vector4f(x, y, z, 1.0F);
             pos.multiply(matrix4f);
 
-            drain.writeQuad(pos.getX(), pos.getY(), pos.getZ(), color, u, v, light[i], overlay, norm);
+            drain.writeQuad(pos.getX(), pos.getY(), pos.getZ(), color, u, v, light[i], norm);
         }
 
         drain.flush();

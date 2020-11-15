@@ -12,12 +12,11 @@ public class QuadVertexWriterFallback extends VertexWriterFallback implements Qu
     }
 
     @Override
-    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int overlay, int normal) {
+    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int normal) {
         VertexConsumer consumer = this.consumer;
         consumer.vertex(x, y, z);
         consumer.color(ColorABGR.unpackRed(color), ColorABGR.unpackGreen(color), ColorABGR.unpackBlue(color), ColorABGR.unpackAlpha(color));
         consumer.texture(u, v);
-        consumer.defaultOverlay(overlay);
         consumer.light(light);
         consumer.normal(Norm3b.unpackX(normal), Norm3b.unpackY(normal), Norm3b.unpackZ(normal));
         consumer.next();

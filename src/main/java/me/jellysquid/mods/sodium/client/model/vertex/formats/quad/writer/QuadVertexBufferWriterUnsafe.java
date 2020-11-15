@@ -5,13 +5,15 @@ import me.jellysquid.mods.sodium.client.model.vertex.buffer.VertexBufferWriterUn
 import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.QuadVertexSink;
 
 public class QuadVertexBufferWriterUnsafe extends VertexBufferWriterUnsafe implements QuadVertexSink {
+    private static final int overlay = 0 | 10 << 16;
+
     public QuadVertexBufferWriterUnsafe(VertexBufferView backingBuffer) {
         super(backingBuffer, QuadVertexSink.VERTEX_FORMAT);
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
     @Override
-    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int overlay, int normal) {
+    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int normal) {
         long i = this.writePointer;
 
         UNSAFE.putFloat(i, x);
@@ -20,7 +22,7 @@ public class QuadVertexBufferWriterUnsafe extends VertexBufferWriterUnsafe imple
         UNSAFE.putInt(i + 12, color);
         UNSAFE.putFloat(i + 16, u);
         UNSAFE.putFloat(i + 20, v);
-        UNSAFE.putInt(i + 24, overlay);
+        UNSAFE.putInt(i + 24, this.overlay);
         UNSAFE.putInt(i + 28, light);
         UNSAFE.putInt(i + 32, normal);
 

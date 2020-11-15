@@ -316,7 +316,7 @@ public class SodiumWorldRenderer implements ChunkStatusListener {
                 int stage = breakingInfos.last().getStage();
 
                 if (stage >= 0) {
-                    VertexConsumer transformer = new MatrixVertexConsumer(bufferBuilders.method_23001().getBuffer(RenderLayer.getCrumbling(stage)), matrices.peek());
+                    VertexConsumer transformer = new MatrixVertexConsumer(bufferBuilders.method_23001().getBuffer(RenderLayer.method_23011(stage)), matrices.peek());
                     consumer = (layer) -> layer.method_23037() ? new DelegatingVertexConsumer(ImmutableList.of(transformer, immediate.getBuffer(layer))) : immediate.getBuffer(layer);
                 }
             }

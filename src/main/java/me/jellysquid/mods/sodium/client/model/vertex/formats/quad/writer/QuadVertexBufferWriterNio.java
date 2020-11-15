@@ -7,12 +7,14 @@ import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.QuadVertexSink
 import java.nio.ByteBuffer;
 
 public class QuadVertexBufferWriterNio extends VertexBufferWriterNio implements QuadVertexSink {
+    private static final int overlay = 0 | 10 << 16;
+
     public QuadVertexBufferWriterNio(VertexBufferView backingBuffer) {
         super(backingBuffer, QuadVertexSink.VERTEX_FORMAT);
     }
 
     @Override
-    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int overlay, int normal) {
+    public void writeQuad(float x, float y, float z, int color, float u, float v, int light, int normal) {
         int i = this.writeOffset;
 
         ByteBuffer buf = this.byteBuffer;
@@ -22,7 +24,7 @@ public class QuadVertexBufferWriterNio extends VertexBufferWriterNio implements 
         buf.putInt(i + 12, color);
         buf.putFloat(i + 16, u);
         buf.putFloat(i + 20, v);
-        buf.putInt(i + 24, overlay);
+        buf.putInt(i + 24, this.overlay);
         buf.putInt(i + 28, light);
         buf.putInt(i + 32, normal);
 

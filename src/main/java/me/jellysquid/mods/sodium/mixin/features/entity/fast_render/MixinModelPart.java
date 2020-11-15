@@ -14,6 +14,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
@@ -35,17 +36,13 @@ public class MixinModelPart {
      * @reason Use optimized vertex writer, avoid allocations, use quick matrix transformations
      */
     @Overwrite
-    private void renderCuboids(Matrix4f matrix4f, VertexConsumer vertexConsumer, float pivotDistance, int light, int overlay, @Nullable Sprite sprite, float red, float green, float blue) {
+    private void renderCuboids(Matrix4f matrix4f, VertexConsumer vertexConsumer, float pivotDistance, int light, @Nullable Sprite sprite, float red, float green, float blue) {
         //Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.method_23762());
         Matrix3f matrix3f = new Matrix3f(matrix4f);
         Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrix4f);
 
         QuadVertexSink drain = VertexDrain.of(vertexConsumer).createSink(DefaultVertexTypes.QUADS);
         drain.ensureCapacity(this.cuboids.size() * 6 * 4);
-
-        // FIXME
-        // Investigate 1.0F, 1.15-pre1 -> 19w46b
-        int color = ColorABGR.pack(red, green, blue, 1.0F);
 
         for (ModelPart.Cuboid cuboid : this.cuboids) {
             for (ModelPart.Quad quad : ((ModelCuboidAccessor) cuboid).getQuads()) {
@@ -66,6 +63,11 @@ public class MixinModelPart {
                 //float normZ = normalExt.transformVecZ(quad.field_21618);
 
                 int norm = Norm3b.pack(normX, normY, normZ);
+
+                // FIXME
+                // Investigate 1.0F, 1.15-pre1 -> 19w46b
+                float br = MathHelper.method_22451(normX, normY, normZ);
+                int color = ColorABGR.pack(red * br, green * br, blue * br, 1.0F);
 
                 for (ModelPart.Vertex vertex : quad.vertices) {
                     Vec3d pos = vertex.pos;
@@ -88,7 +90,7 @@ public class MixinModelPart {
                        v = sprite.getV((double)(vertex.v * 16.0F));
                     }
 
-                    drain.writeQuad(x2, y2, z2, color, u, v, light, overlay, norm);
+                    drain.writeQuad(x2, y2, z2, color, u, v, light, norm);
                 }
             }
         }
