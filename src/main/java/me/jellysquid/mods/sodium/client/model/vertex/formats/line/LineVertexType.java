@@ -6,7 +6,7 @@ import me.jellysquid.mods.sodium.client.model.vertex.buffer.VertexBufferView;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.line.writer.LineVertexBufferWriterNio;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.line.writer.LineVertexBufferWriterUnsafe;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.line.writer.LineVertexWriterFallback;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4588;
 import net.minecraft.client.render.VertexFormat;
 
 public class LineVertexType implements VertexType<LineVertexSink>, VertexTypeBlittable<LineVertexSink> {
@@ -16,7 +16,7 @@ public class LineVertexType implements VertexType<LineVertexSink>, VertexTypeBli
     }
 
     @Override
-    public LineVertexSink createFallbackWriter(VertexConsumer consumer) {
+    public LineVertexSink createFallbackWriter(class_4588 consumer) {
         return new LineVertexWriterFallback(consumer);
     }
 

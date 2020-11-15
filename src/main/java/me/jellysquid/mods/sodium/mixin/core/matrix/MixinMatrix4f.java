@@ -216,7 +216,7 @@ public class MixinMatrix4f implements Matrix4fExtended {
      * @author JellySquid
      */
     @Overwrite
-    public void writeToBuffer(FloatBuffer buf) {
+    public void putIntoBuffer(FloatBuffer buf) {
         if (buf.remaining() < 16) {
             throw new BufferUnderflowException();
         }

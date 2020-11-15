@@ -13,7 +13,8 @@ import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
 import me.jellysquid.mods.sodium.client.util.rand.XoRoShiRoRandom;
 import me.jellysquid.mods.sodium.common.util.DirectionUtil;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4587;
+import net.minecraft.class_4588;
 import net.minecraft.client.render.block.BlockModelRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
@@ -21,8 +22,6 @@ import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.MatrixStack;
 import net.minecraft.world.BlockRenderView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -38,7 +37,7 @@ public class MixinBlockModelRenderer {
     private final XoRoShiRoRandom random = new XoRoShiRoRandom();
 
     @Inject(method = "tesselate", at = @At("HEAD"), cancellable = true)
-    private void preRenderBlockInWorld(BlockRenderView world, BakedModel model, BlockState state, BlockPos pos, MatrixStack matrixStack, VertexConsumer consumer, boolean cull, Random rand, long seed, CallbackInfoReturnable<Boolean> cir) {
+    private void preRenderBlockInWorld(BlockRenderView world, BakedModel model, BlockState state, BlockPos pos, class_4587 matrixStack, class_4588 consumer, boolean cull, Random rand, long seed, CallbackInfoReturnable<Boolean> cir) {
         GlobalRenderContext renderer = GlobalRenderContext.getInstance(world);
         BlockRenderer blockRenderer = renderer.getBlockRenderer();
 
@@ -52,7 +51,7 @@ public class MixinBlockModelRenderer {
      * @author JellySquid
      */
     @Overwrite
-    public void render(Matrix4f matrix4f, VertexConsumer vertexConsumer, BlockState blockState, BakedModel bakedModel, float red, float green, float blue, int light) {
+    public void render(Matrix4f matrix4f, class_4588 vertexConsumer, BlockState blockState, BakedModel bakedModel, float red, float green, float blue, int light) {
         QuadVertexSink drain = VertexDrain.of(vertexConsumer)
                 .createSink(DefaultVertexTypes.QUADS);
         XoRoShiRoRandom random = this.random;

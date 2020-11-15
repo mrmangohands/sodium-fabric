@@ -10,10 +10,10 @@ import org.spongepowered.asm.mixin.Shadow;
 public class MixinCuboid implements ModelCuboidAccessor {
     @Shadow
     @Final
-    private ModelPart.Quad[] sides;
+    private ModelPart.Quad[] polygons;
 
     @Override
     public ModelPart.Quad[] getQuads() {
-        return this.sides;
+        return this.polygons;
     }
 }

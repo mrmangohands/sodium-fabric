@@ -13,10 +13,10 @@ import me.jellysquid.mods.sodium.client.render.pipeline.context.ChunkRenderConte
 import me.jellysquid.mods.sodium.client.util.task.CancellationSource;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.Vec3d;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
@@ -85,7 +85,7 @@ public class ChunkRenderRebuildTask<T extends ChunkGraphicsState> extends ChunkR
                     if (block.getRenderType(blockState) == BlockRenderType.MODEL) {
                         // FIXME
                         // Check collection backing types on these, see commit for details
-                        RenderLayer layer = RenderLayer.method_22715(blockState);
+                        BlockRenderLayer layer = BlockRenderLayer.method_22715(blockState);
 
                         ChunkBuildBuffers.ChunkBuildBufferDelegate builder = buffers.get(layer);
                         builder.setOffset(x - offset.getX(), y - offset.getY(), z - offset.getZ());
@@ -98,7 +98,7 @@ public class ChunkRenderRebuildTask<T extends ChunkGraphicsState> extends ChunkR
                     FluidState fluidState = block.getFluidState(blockState);
 
                     if (!fluidState.isEmpty()) {
-                        RenderLayer layer = RenderLayer.method_22716(fluidState);
+                        BlockRenderLayer layer = BlockRenderLayer.method_22716(fluidState);
 
                         ChunkBuildBuffers.ChunkBuildBufferDelegate builder = buffers.get(layer);
                         builder.setOffset(x - offset.getX(), y - offset.getY(), z - offset.getZ());

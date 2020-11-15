@@ -2,8 +2,8 @@ package me.jellysquid.mods.sodium.client.render.chunk.shader;
 
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gl.shader.GlProgram;
+import net.minecraft.class_4587;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MatrixStack;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -42,7 +42,7 @@ public abstract class ChunkProgram extends GlProgram {
         this.fogShader = fogShaderFunction.apply(this);
     }
 
-    public void setup(MatrixStack matrixStack) {
+    public void setup(class_4587 matrixStack) {
         GL20.glUniform1i(this.uBlockTex, 0);
         GL20.glUniform1i(this.uLightTex, 2);
 
@@ -62,7 +62,7 @@ public abstract class ChunkProgram extends GlProgram {
             FloatBuffer bufModelViewProjection = stack.mallocFloat(16);
 
             GL15.glGetFloatv(GL15.GL_PROJECTION_MATRIX, bufProjection);
-            matrixStack.peek().writeToBuffer(bufModelView);
+            matrixStack.method_22910().putIntoBuffer(bufModelView);
 
             GL11.glPushMatrix();
             GL11.glLoadMatrixf(bufProjection);

@@ -3,11 +3,11 @@ package me.jellysquid.mods.sodium.client.model.vertex.formats.quad;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexSink;
 import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
+import net.minecraft.class_4581;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix3f;
 
 public interface QuadVertexSink extends VertexSink {
     VertexFormat VERTEX_FORMAT = VertexFormats.POSITION_UV_NORMAL_2;
@@ -38,16 +38,6 @@ public interface QuadVertexSink extends VertexSink {
         float y2 = modelMatrix.transformVecY(x, y, z);
         float z2 = modelMatrix.transformVecZ(x, y, z);
 
-        Matrix3f matrix3f = new Matrix3f(matrix4f);
-        matrix3f.transpose();
-        float i = matrix3f.determinantAndAdjugate();
-        if (!(i < 1.0E-5F)) {
-           float j = matrix3f.determinant();
-           matrix3f.multiply(MathHelper.fastInverseCbrt(j));
-        }
-
-        int norm = MatrixUtil.transformPackedNormal(normal, matrix3f);
-
-        this.writeQuad(x2, y2, z2, color, u, v, light, norm);
+        this.writeQuad(x2, y2, z2, color, u, v, light, normal);
     }
 }

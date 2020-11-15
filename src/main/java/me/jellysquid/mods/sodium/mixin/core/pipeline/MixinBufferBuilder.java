@@ -6,8 +6,8 @@ import me.jellysquid.mods.sodium.client.model.vertex.VertexType;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexTypeBlittable;
 import me.jellysquid.mods.sodium.client.model.vertex.buffer.VertexBufferView;
 import me.jellysquid.mods.sodium.client.util.UnsafeUtil;
+import net.minecraft.class_4588;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.util.GlAllocationUtils;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public abstract class MixinBufferBuilder implements VertexBufferView, VertexDrai
     private int field_20884;
 
     @Shadow
-    private ByteBuffer buffer;
+    private ByteBuffer bufByte;
 
     @Shadow
     @Final
@@ -42,28 +42,28 @@ public abstract class MixinBufferBuilder implements VertexBufferView, VertexDrai
 
     @Override
     public boolean ensureBufferCapacity(int bytes) {
-        if (this.field_20884 + bytes <= this.buffer.capacity()) {
+        if (this.field_20884 + bytes <= this.bufByte.capacity()) {
             return false;
         }
 
-        int newSize = this.buffer.capacity() + roundBufferSize(bytes);
+        int newSize = this.bufByte.capacity() + roundBufferSize(bytes);
 
-        LOGGER.debug("Needed to grow BufferBuilder buffer: Old size {} bytes, new size {} bytes.", this.buffer.capacity(), newSize);
+        LOGGER.debug("Needed to grow BufferBuilder bufByte: Old size {} bytes, new size {} bytes.", this.bufByte.capacity(), newSize);
 
-        this.buffer.position(0);
+        this.bufByte.position(0);
 
         ByteBuffer byteBuffer = GlAllocationUtils.allocateByteBuffer(newSize);
-        byteBuffer.put(this.buffer);
+        byteBuffer.put(this.bufByte);
         byteBuffer.rewind();
 
-        this.buffer = byteBuffer;
+        this.bufByte = byteBuffer;
 
         return true;
     }
 
     @Override
     public ByteBuffer getDirectBuffer() {
-        return this.buffer;
+        return this.bufByte;
     }
 
     @Override
@@ -94,6 +94,6 @@ public abstract class MixinBufferBuilder implements VertexBufferView, VertexDrai
             return blittable.createBufferWriter(this, UnsafeUtil.isAvailable());
         }
 
-        return factory.createFallbackWriter((VertexConsumer) this);
+        return factory.createFallbackWriter((class_4588) this);
     }
 }

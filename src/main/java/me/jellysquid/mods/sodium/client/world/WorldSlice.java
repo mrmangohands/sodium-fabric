@@ -7,6 +7,8 @@ import me.jellysquid.mods.sodium.client.world.biome.BiomeCacheManager;
 import me.jellysquid.mods.sodium.common.util.pool.ReusableObject;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.class_4543;
+import net.minecraft.class_4548;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.PackedIntegerArray;
 import net.minecraft.util.math.BlockPos;
@@ -16,8 +18,6 @@ import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeAccess;
-import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.chunk.light.ChunkLightingView;
 import net.minecraft.world.chunk.light.LightingProvider;
@@ -35,7 +35,7 @@ import java.util.Map;
  *
  * Object pooling should be used to avoid huge allocations as this class contains many large arrays.
  */
-public class WorldSlice extends ReusableObject implements BlockRenderView, BiomeAccess.Storage {
+public class WorldSlice extends ReusableObject implements BlockRenderView, class_4543.class_4544 {
     private static final ChunkSection EMPTY_SECTION = new ChunkSection(0);
 
     // The number of blocks on each axis in a section.
@@ -81,7 +81,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     // Local Section->Biome table.
     private final BiomeCache[] biomeCaches;
-    private final BiomeArray[] biomeArrays;
+    private final class_4548[] biomeArrays;
 
     // The biome blend caches for each color resolver type
     // This map is always re-initialized, but the caches themselves are taken from an object pool
@@ -159,7 +159,7 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
         this.skyLightArrays = new ChunkNibbleArray[SECTION_TABLE_ARRAY_SIZE];
 
         this.biomeCaches = new BiomeCache[CHUNK_TABLE_ARRAY_SIZE];
-        this.biomeArrays = new BiomeArray[CHUNK_TABLE_ARRAY_SIZE];
+        this.biomeArrays = new class_4548[CHUNK_TABLE_ARRAY_SIZE];
 
         this.originBlockStates = this.blockStatesArrays[getLocalSectionIndex((SECTION_LENGTH / 2), (SECTION_LENGTH / 2), (SECTION_LENGTH / 2))];
     }
@@ -307,8 +307,8 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
     }
 
     @Override
-    public BiomeAccess getBiomeAccess() {
-        return this.world.getBiomeAccess();
+    public class_4543 method_22385() {
+        return this.world.method_22385();
     }
     @Override
     public BlockEntity getBlockEntity(BlockPos pos) {
@@ -372,19 +372,19 @@ public class WorldSlice extends ReusableObject implements BlockRenderView, Biome
 
     // TODO: Is this safe? The biome data arrays should be immutable once loaded into the client
     @Override
-    public Biome getStoredBiome(int x, int y, int z) {
+    public Biome getBiome(int x, int y, int z) {
         int x2 = (x >> 2) - (this.baseX >> 4);
         int z2 = (z >> 2) - (this.baseZ >> 4);
 
         // Coordinates are in biome space!
         // [VanillaCopy] WorldView#getBiomeForNoiseGen(int, int, int)
-        BiomeArray array = this.biomeArrays[getLocalChunkIndex(x2, z2)];
+        class_4548 array = this.biomeArrays[getLocalChunkIndex(x2, z2)];
 
         if (array != null ) {
-            return array.getStoredBiome(x, y, z);
+            return array.getBiome(x, y, z);
         }
 
-        return this.world.getGeneratorStoredBiome(x, y, z);
+        return this.world.method_22387(x, y, z);
     }
 
     /**

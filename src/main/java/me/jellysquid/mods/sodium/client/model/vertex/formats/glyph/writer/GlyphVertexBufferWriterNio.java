@@ -19,10 +19,10 @@ public class GlyphVertexBufferWriterNio extends VertexBufferWriterNio implements
         buffer.putFloat(i, x);
         buffer.putFloat(i + 4, y);
         buffer.putFloat(i + 8, z);
-        buffer.putInt(i + 12, color);
-        buffer.putFloat(i + 16, u);
-        buffer.putFloat(i + 20, v);
-        buffer.putInt(i + 24, light);
+        buffer.putFloat(i + 12, u);
+        buffer.putFloat(i + 16, v);
+        buffer.putInt(i + 20, light);
+        buffer.putInt(i + 24, color);
 
         this.advance();
     }

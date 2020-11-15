@@ -17,10 +17,10 @@ public class GlyphVertexBufferWriterUnsafe extends VertexBufferWriterUnsafe impl
         UNSAFE.putFloat(i, x);
         UNSAFE.putFloat(i + 4, y);
         UNSAFE.putFloat(i + 8, z);
-        UNSAFE.putInt(i + 12, color);
-        UNSAFE.putFloat(i + 16, u);
-        UNSAFE.putFloat(i + 20, v);
-        UNSAFE.putInt(i + 24, light);
+        UNSAFE.putFloat(i + 12, u);
+        UNSAFE.putFloat(i + 16, v);
+        UNSAFE.putInt(i + 20, light);
+        UNSAFE.putInt(i + 24, color);
 
         this.advance();
 

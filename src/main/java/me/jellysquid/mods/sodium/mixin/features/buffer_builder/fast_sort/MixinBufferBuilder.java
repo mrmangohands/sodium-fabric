@@ -16,7 +16,7 @@ import java.util.BitSet;
 @Mixin(BufferBuilder.class)
 public class MixinBufferBuilder {
     @Shadow
-    private ByteBuffer buffer;
+    private ByteBuffer bufByte;
 
     @Shadow
     private int vertexCount;
@@ -33,8 +33,8 @@ public class MixinBufferBuilder {
      */
     @Overwrite
     public void sortQuads(float cameraX, float cameraY, float cameraZ) {
-        this.buffer.clear();
-        FloatBuffer floatBuffer = this.buffer.asFloatBuffer();
+        this.bufByte.clear();
+        FloatBuffer floatBuffer = this.bufByte.asFloatBuffer();
 
         int vertexStride = this.format.getVertexSize();
         int quadStride = this.format.getVertexSizeInteger() * 4;

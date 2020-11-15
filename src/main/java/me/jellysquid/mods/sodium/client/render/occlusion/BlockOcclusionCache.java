@@ -37,8 +37,8 @@ public class BlockOcclusionCache {
         if (selfState.isSideInvisible(adjState, facing)) {
             return false;
         } else if (adjState.isOpaque()) {
-            VoxelShape selfShape = selfState.getCullingShape(view, pos, facing);
-            VoxelShape adjShape = adjState.getCullingShape(view, adjPos, facing.getOpposite());
+            VoxelShape selfShape = selfState.getCullShape(view, pos, facing);
+            VoxelShape adjShape = adjState.getCullShape(view, adjPos, facing.getOpposite());
 
             if (selfShape == VoxelShapes.fullCube() && adjShape == VoxelShapes.fullCube()) {
                 return false;

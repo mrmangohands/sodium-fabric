@@ -75,7 +75,7 @@ public abstract class LightDataAccess {
         boolean fo = state.isFullOpaque(world, pos);
 
         // OPTIMIZE: Do not calculate lightmap data if the block is full and opaque
-        int lm = fo ? 0 : world.getLightmapCoordinates(state, pos);
+        int lm = fo ? 0 : world.getLightmapIndex(state, pos);
 
         return packAO(ao) | packLM(lm) | packOP(op) | packFO(fo) | (1L << 60);
     }

@@ -2,11 +2,11 @@ package me.jellysquid.mods.sodium.mixin.features.particle.cull;
 
 import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer;
+import net.minecraft.class_4604;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.Frustum;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.util.math.Box;
 import org.spongepowered.asm.mixin.Final;
@@ -29,11 +29,11 @@ public class MixinParticleManager {
 
     private final Queue<Particle> cachedQueue = new ArrayDeque<>();
 
-    private Frustum cullingFrustum;
+    private class_4604 cullingFrustum;
 
     @Inject(method = "renderParticles", at = @At("HEAD"))
     private void preRenderParticles(Camera camera, float f, CallbackInfo ci) {
-        Frustum frustum = SodiumWorldRenderer.getInstance().getFrustum();
+        class_4604 frustum = SodiumWorldRenderer.getInstance().getFrustum();
         boolean useCulling = SodiumClientMod.options().advanced.useParticleCulling;
 
         // Setup the frustum state before rendering particles

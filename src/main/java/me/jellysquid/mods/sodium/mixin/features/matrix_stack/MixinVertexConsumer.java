@@ -2,23 +2,23 @@ package me.jellysquid.mods.sodium.mixin.features.matrix_stack;
 
 import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4588;
 import net.minecraft.client.util.math.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(VertexConsumer.class)
+@Mixin(class_4588.class)
 public interface MixinVertexConsumer {
     @Shadow
-    VertexConsumer vertex(double x, double y, double z);
+    class_4588 vertex(double x, double y, double z);
 
     /**
      * @reason Avoid allocations
      * @author JellySquid
      */
     @Overwrite
-    default VertexConsumer vertex(Matrix4f matrix, float x, float y, float z) {
+    default class_4588 method_22918(Matrix4f matrix, float x, float y, float z) {
         Matrix4fExtended ext = MatrixUtil.getExtendedMatrix(matrix);
         float x2 = ext.transformVecX(x, y, z);
         float y2 = ext.transformVecY(x, y, z);

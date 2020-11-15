@@ -2,7 +2,7 @@ package me.jellysquid.mods.sodium.mixin.core.frustum;
 
 import me.jellysquid.mods.sodium.client.util.math.FrustumExtended;
 import me.jellysquid.mods.sodium.client.util.math.Vector4fExtended;
-import net.minecraft.client.render.Frustum;
+import net.minecraft.class_4604;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector4f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Frustum.class)
+@Mixin(class_4604.class)
 public class MixinFrustum implements FrustumExtended {
     private float xF, yF, zF;
 
@@ -32,7 +32,7 @@ public class MixinFrustum implements FrustumExtended {
     @Inject(method = "method_23091", at = @At("HEAD"))
     private void transform(Matrix4f mat, int x, int y, int z, int index, CallbackInfo ci) {
         Vector4f vec = new Vector4f((float) x, (float) y, (float) z, 1.0F);
-        vec.multiply(mat);
+        vec.method_22674(mat);
         vec.method_23218();
 
         switch (index) {

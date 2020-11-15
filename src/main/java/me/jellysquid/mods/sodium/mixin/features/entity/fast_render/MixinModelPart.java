@@ -9,13 +9,13 @@ import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
 import me.jellysquid.mods.sodium.client.util.math.Matrix3fExtended;
 import me.jellysquid.mods.sodium.client.util.math.Matrix4fExtended;
 import me.jellysquid.mods.sodium.client.util.math.MatrixUtil;
+import net.minecraft.class_4581;
+import net.minecraft.class_4588;
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,9 +36,9 @@ public class MixinModelPart {
      * @reason Use optimized vertex writer, avoid allocations, use quick matrix transformations
      */
     @Overwrite
-    private void renderCuboids(Matrix4f matrix4f, VertexConsumer vertexConsumer, float pivotDistance, int light, @Nullable Sprite sprite, float red, float green, float blue) {
+    private void method_22702(Matrix4f matrix4f, class_4588 vertexConsumer, float pivotDistance, int light, @Nullable Sprite sprite, float red, float green, float blue) {
         //Matrix3fExtended normalExt = MatrixUtil.getExtendedMatrix(matrices.method_23762());
-        Matrix3f matrix3f = new Matrix3f(matrix4f);
+        class_4581 matrix3f = new class_4581(matrix4f);
         Matrix4fExtended modelExt = MatrixUtil.getExtendedMatrix(matrix4f);
 
         QuadVertexSink drain = VertexDrain.of(vertexConsumer).createSink(DefaultVertexTypes.QUADS);
@@ -50,8 +50,8 @@ public class MixinModelPart {
                 //19w46a -> 19w45b
                 Vector3f vector3f = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[0].pos));
                 Vector3f vector3f2 = new Vector3f(quad.vertices[1].pos.reverseSubtract(quad.vertices[2].pos));
-                vector3f.multiply(matrix3f);
-                vector3f2.multiply(matrix3f);
+                vector3f.method_23215(matrix3f);
+                vector3f2.method_23215(matrix3f);
                 vector3f2.cross(vector3f);
                 vector3f2.reciprocal();
                 float normX = vector3f2.getX();

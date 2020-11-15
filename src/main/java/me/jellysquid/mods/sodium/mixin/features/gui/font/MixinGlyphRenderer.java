@@ -4,8 +4,8 @@ import me.jellysquid.mods.sodium.client.model.vertex.DefaultVertexTypes;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexDrain;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.glyph.GlyphVertexSink;
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
+import net.minecraft.class_4588;
 import net.minecraft.client.font.GlyphRenderer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +51,7 @@ public class MixinGlyphRenderer {
      * @author JellySquid
      */
     @Overwrite
-    public void draw(boolean italic, float x, float y, Matrix4f matrix, VertexConsumer vertexConsumer, float red, float green, float blue, float alpha, int light) {
+    public void draw(boolean italic, float x, float y, Matrix4f matrix, class_4588 vertexConsumer, float red, float green, float blue, float alpha, int light) {
         float x1 = x + this.xMin;
         float x2 = x + this.xMax;
         float y1 = this.yMin - 3.0F;

@@ -4,10 +4,10 @@ import me.jellysquid.mods.sodium.client.model.vertex.DefaultVertexTypes;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexDrain;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.particle.ParticleVertexSink;
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
+import net.minecraft.class_4588;
 import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Quaternion;
@@ -43,7 +43,7 @@ public abstract class MixinBillboardParticle extends Particle {
      * @author JellySquid
      */
     @Overwrite
-    public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta, float f, float g, float h, float i, float j) {
+    public void buildGeometry(class_4588 vertexConsumer, Camera camera, float tickDelta, float f, float g, float h, float i, float j) {
         Vec3d vec3d = camera.getPos();
 
         float x = (float) (MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
@@ -54,15 +54,15 @@ public abstract class MixinBillboardParticle extends Particle {
 
         if (this.angle == 0.0F) {
             quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
-            quaternion.copyFrom(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw(), true));
-            quaternion.copyFrom(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch(), true));
+            quaternion.copyFrom(Vector3f.field_20705.method_23214(-camera.getYaw(), true));
+            quaternion.copyFrom(Vector3f.field_20703.method_23214(camera.getPitch(), true));
         } else {
             float angle = MathHelper.lerp(tickDelta, this.prevAngle, this.angle);
 
             quaternion = new Quaternion(0.0F, 0.0F, 0.0F, 1.0F);
-            quaternion.copyFrom(Vector3f.POSITIVE_Y.getRotationQuaternion(-camera.getYaw(), true));
-            quaternion.copyFrom(Vector3f.POSITIVE_X.getRotationQuaternion(camera.getPitch(), true));
-            quaternion.copyFrom(Vector3f.POSITIVE_Z.getRotationQuaternion(angle, false));
+            quaternion.copyFrom(Vector3f.field_20705.method_23214(-camera.getYaw(), true));
+            quaternion.copyFrom(Vector3f.field_20703.method_23214(camera.getPitch(), true));
+            quaternion.copyFrom(Vector3f.field_20707.method_23214(angle, false));
         }
 
         float size = this.getSize(tickDelta);

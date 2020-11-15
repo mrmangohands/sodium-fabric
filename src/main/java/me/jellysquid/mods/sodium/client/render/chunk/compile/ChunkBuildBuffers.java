@@ -9,7 +9,7 @@ import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkMeshData;
 import me.jellysquid.mods.sodium.client.render.chunk.data.ChunkRenderData;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPass;
 import me.jellysquid.mods.sodium.client.render.chunk.passes.BlockRenderPassManager;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.block.BlockRenderLayer;
 import net.minecraft.client.render.Vec3d;
 import net.minecraft.client.util.GlAllocationUtils;
 import net.minecraft.util.math.BlockPos;
@@ -40,12 +40,12 @@ public class ChunkBuildBuffers {
         this.delegates = new ChunkBuildBufferDelegate[BlockRenderPass.COUNT];
         this.buildersByLayer = new ChunkMeshBuilder[BlockRenderPass.COUNT][ModelQuadFacing.COUNT];
 
-        for (RenderLayer layer : RenderLayer.getBlockLayers()) {
+        for (BlockRenderLayer layer : BlockRenderLayer.method_22720()) {
             int passId = this.renderPassManager.getRenderPassId(layer);
 
             for (ModelQuadFacing facing : ModelQuadFacing.VALUES) {
                 this.buildersByLayer[passId][facing.ordinal()] =
-                        new ChunkMeshBuilder(format, layer.getExpectedBufferSize() / ModelQuadFacing.COUNT);
+                        new ChunkMeshBuilder(format, layer.method_22722() / ModelQuadFacing.COUNT);
             }
 
             this.delegates[passId] = new ChunkBuildBufferDelegate(this.buildersByLayer[passId]);
@@ -60,7 +60,7 @@ public class ChunkBuildBuffers {
      * Return the {@link ChunkMeshBuilder} for the given {@link RenderLayer} as mapped by the
      * {@link BlockRenderPassManager} for this render context.
      */
-    public ChunkBuildBufferDelegate get(RenderLayer layer) {
+    public ChunkBuildBufferDelegate get(BlockRenderLayer layer) {
         return this.delegates[this.renderPassManager.getRenderPassId(layer)];
     }
 

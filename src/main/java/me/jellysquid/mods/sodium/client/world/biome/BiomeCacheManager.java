@@ -3,8 +3,8 @@ package me.jellysquid.mods.sodium.client.world.biome;
 import it.unimi.dsi.fastutil.longs.Long2ReferenceLinkedOpenHashMap;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
 import me.jellysquid.mods.sodium.common.util.pool.ObjectPool;
+import net.minecraft.class_4545;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.world.biome.BiomeAccessType;
 
 public class BiomeCacheManager {
     private static final int CACHE_SIZE = 256;
@@ -13,7 +13,7 @@ public class BiomeCacheManager {
     private final ObjectPool<BiomeCache> pool;
     private final Long2ReferenceLinkedOpenHashMap<BiomeCache> caches = new Long2ReferenceLinkedOpenHashMap<>(CACHE_SIZE, 0.5f);
 
-    public BiomeCacheManager(BiomeAccessType type, long seed) {
+    public BiomeCacheManager(class_4545 type, long seed) {
         this.pool = new ObjectPool<>(ARENA_SIZE, () -> new BiomeCache(type, seed));
     }
 

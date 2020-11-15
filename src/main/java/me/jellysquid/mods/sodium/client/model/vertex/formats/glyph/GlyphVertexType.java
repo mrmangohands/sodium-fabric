@@ -6,7 +6,7 @@ import me.jellysquid.mods.sodium.client.model.vertex.buffer.VertexBufferView;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.glyph.writer.GlyphVertexBufferWriterNio;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.glyph.writer.GlyphVertexBufferWriterUnsafe;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.glyph.writer.GlyphVertexWriterFallback;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4588;
 import net.minecraft.client.render.VertexFormat;
 
 public class GlyphVertexType implements VertexType<GlyphVertexSink>, VertexTypeBlittable<GlyphVertexSink> {
@@ -16,7 +16,7 @@ public class GlyphVertexType implements VertexType<GlyphVertexSink>, VertexTypeB
     }
 
     @Override
-    public GlyphVertexSink createFallbackWriter(VertexConsumer consumer) {
+    public GlyphVertexSink createFallbackWriter(class_4588 consumer) {
         return new GlyphVertexWriterFallback(consumer);
     }
 

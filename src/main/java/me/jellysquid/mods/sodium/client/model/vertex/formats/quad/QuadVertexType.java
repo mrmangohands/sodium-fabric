@@ -6,12 +6,12 @@ import me.jellysquid.mods.sodium.client.model.vertex.buffer.VertexBufferView;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.writer.QuadVertexBufferWriterNio;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.writer.QuadVertexBufferWriterUnsafe;
 import me.jellysquid.mods.sodium.client.model.vertex.formats.quad.writer.QuadVertexWriterFallback;
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4588;
 import net.minecraft.client.render.VertexFormat;
 
 public class QuadVertexType implements VertexType<QuadVertexSink>, VertexTypeBlittable<QuadVertexSink> {
     @Override
-    public QuadVertexSink createFallbackWriter(VertexConsumer consumer) {
+    public QuadVertexSink createFallbackWriter(class_4588 consumer) {
         return new QuadVertexWriterFallback(consumer);
     }
 

@@ -2,33 +2,33 @@ package me.jellysquid.mods.sodium.mixin.core.matrix;
 
 import me.jellysquid.mods.sodium.client.util.Norm3b;
 import me.jellysquid.mods.sodium.client.util.math.Matrix3fExtended;
+import net.minecraft.class_4581;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3i;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(Matrix3f.class)
+@Mixin(class_4581.class)
 public class MixinMatrix3f implements Matrix3fExtended {
     @Final
     @Shadow
-    private float[] components;
+    private float[] field_20864;
 
     @Override
     public float transformVecX(float x, float y, float z) {
-        return this.components[0] * x + this.components[3] * y + this.components[6] * z;
+        return this.field_20864[0] * x + this.field_20864[3] * y + this.field_20864[6] * z;
     }
 
     @Override
     public float transformVecY(float x, float y, float z) {
-        return this.components[1] * x + this.components[4] * y + this.components[7] * z;
+        return this.field_20864[1] * x + this.field_20864[4] * y + this.field_20864[7] * z;
     }
 
     @Override
     public float transformVecZ(float x, float y, float z) {
-        return this.components[2] * x + this.components[5] * y + this.components[8] * z;
+        return this.field_20864[2] * x + this.field_20864[5] * y + this.field_20864[8] * z;
     }
 
     @Override
@@ -63,9 +63,9 @@ public class MixinMatrix3f implements Matrix3fExtended {
         float y = faceNorm.getY();
         float z = faceNorm.getZ();
 
-        float x2 = this.components[0] * x + this.components[3] * y + this.components[6] * z;
-        float y2 = this.components[1] * x + this.components[4] * y + this.components[7] * z;
-        float z2 = this.components[2] * x + this.components[5] * y + this.components[8] * z;
+        float x2 = this.field_20864[0] * x + this.field_20864[3] * y + this.field_20864[6] * z;
+        float y2 = this.field_20864[1] * x + this.field_20864[4] * y + this.field_20864[7] * z;
+        float z2 = this.field_20864[2] * x + this.field_20864[5] * y + this.field_20864[8] * z;
 
         return Norm3b.pack(x2, y2, z2);
     }
@@ -83,19 +83,19 @@ public class MixinMatrix3f implements Matrix3fExtended {
         float tcomponents5 = 2.0F * xw;
         float tcomponents7 = 2.0F * -xw;
 
-        float components3 = this.components[3] * tcomponents4 + this.components[6] * tcomponents5;
-        float components6 = this.components[3] * tcomponents7 + this.components[6] * tcomponents8;
-        float components4 = this.components[4] * tcomponents4 + this.components[7] * tcomponents5;
-        float components7 = this.components[4] * tcomponents7 + this.components[7] * tcomponents8;
-        float components5 = this.components[5] * tcomponents4 + this.components[8] * tcomponents5;
-        float components8 = this.components[5] * tcomponents7 + this.components[8] * tcomponents8;
+        float components3 = this.field_20864[3] * tcomponents4 + this.field_20864[6] * tcomponents5;
+        float components6 = this.field_20864[3] * tcomponents7 + this.field_20864[6] * tcomponents8;
+        float components4 = this.field_20864[4] * tcomponents4 + this.field_20864[7] * tcomponents5;
+        float components7 = this.field_20864[4] * tcomponents7 + this.field_20864[7] * tcomponents8;
+        float components5 = this.field_20864[5] * tcomponents4 + this.field_20864[8] * tcomponents5;
+        float components8 = this.field_20864[5] * tcomponents7 + this.field_20864[8] * tcomponents8;
 
-        this.components[3] = components3;
-        this.components[6] = components6;
-        this.components[4] = components4;
-        this.components[7] = components7;
-        this.components[5] = components5;
-        this.components[8] = components8;
+        this.field_20864[3] = components3;
+        this.field_20864[6] = components6;
+        this.field_20864[4] = components4;
+        this.field_20864[7] = components7;
+        this.field_20864[5] = components5;
+        this.field_20864[8] = components8;
     }
 
     private void rotateY(Quaternion quaternion) {
@@ -112,19 +112,19 @@ public class MixinMatrix3f implements Matrix3fExtended {
         float tcomponents2 = 2.0F * (-yw);
         float tcomponents6 = 2.0F * (+yw);
 
-        float components0 = this.components[0] * tcomponents0 + this.components[6] * tcomponents2;
-        float components6 = this.components[0] * tcomponents6 + this.components[6] * tcomponents8;
-        float components1 = this.components[1] * tcomponents0 + this.components[7] * tcomponents2;
-        float components7 = this.components[1] * tcomponents6 + this.components[7] * tcomponents8;
-        float components2 = this.components[2] * tcomponents0 + this.components[8] * tcomponents2;
-        float components8 = this.components[2] * tcomponents6 + this.components[8] * tcomponents8;
+        float components0 = this.field_20864[0] * tcomponents0 + this.field_20864[6] * tcomponents2;
+        float components6 = this.field_20864[0] * tcomponents6 + this.field_20864[6] * tcomponents8;
+        float components1 = this.field_20864[1] * tcomponents0 + this.field_20864[7] * tcomponents2;
+        float components7 = this.field_20864[1] * tcomponents6 + this.field_20864[7] * tcomponents8;
+        float components2 = this.field_20864[2] * tcomponents0 + this.field_20864[8] * tcomponents2;
+        float components8 = this.field_20864[2] * tcomponents6 + this.field_20864[8] * tcomponents8;
 
-        this.components[0] = components0;
-        this.components[6] = components6;
-        this.components[1] = components1;
-        this.components[7] = components7;
-        this.components[2] = components2;
-        this.components[8] = components8;
+        this.field_20864[0] = components0;
+        this.field_20864[6] = components6;
+        this.field_20864[1] = components1;
+        this.field_20864[7] = components7;
+        this.field_20864[2] = components2;
+        this.field_20864[8] = components8;
     }
 
     private void rotateZ(Quaternion quaternion) {
@@ -141,19 +141,19 @@ public class MixinMatrix3f implements Matrix3fExtended {
         float tcomponents1 = 2.0F * (0.0F + zw);
         float tcomponents3 = 2.0F * (0.0F - zw);
 
-        float components0 = this.components[0] * tcomponents0 + this.components[3] * tcomponents1;
-        float components3 = this.components[0] * tcomponents3 + this.components[3] * tcomponents4;
-        float components1 = this.components[1] * tcomponents0 + this.components[4] * tcomponents1;
-        float components4 = this.components[1] * tcomponents3 + this.components[4] * tcomponents4;
-        float components2 = this.components[2] * tcomponents0 + this.components[5] * tcomponents1;
-        float components5 = this.components[2] * tcomponents3 + this.components[5] * tcomponents4;
+        float components0 = this.field_20864[0] * tcomponents0 + this.field_20864[3] * tcomponents1;
+        float components3 = this.field_20864[0] * tcomponents3 + this.field_20864[3] * tcomponents4;
+        float components1 = this.field_20864[1] * tcomponents0 + this.field_20864[4] * tcomponents1;
+        float components4 = this.field_20864[1] * tcomponents3 + this.field_20864[4] * tcomponents4;
+        float components2 = this.field_20864[2] * tcomponents0 + this.field_20864[5] * tcomponents1;
+        float components5 = this.field_20864[2] * tcomponents3 + this.field_20864[5] * tcomponents4;
 
-        this.components[0] = components0;
-        this.components[3] = components3;
-        this.components[1] = components1;
-        this.components[4] = components4;
-        this.components[2] = components2;
-        this.components[5] = components5;
+        this.field_20864[0] = components0;
+        this.field_20864[3] = components3;
+        this.field_20864[1] = components1;
+        this.field_20864[4] = components4;
+        this.field_20864[2] = components2;
+        this.field_20864[5] = components5;
     }
 
     private void rotateXYZ(Quaternion quaternion) {
@@ -184,24 +184,24 @@ public class MixinMatrix3f implements Matrix3fExtended {
         float tcomponents5 = 2.0F * (yz + xw);
         float tcomponents7 = 2.0F * (yz - xw);
 
-        float components0 = this.components[0] * tcomponents0 + this.components[3] * tcomponents1 + this.components[6] * tcomponents2;
-        float components3 = this.components[0] * tcomponents3 + this.components[3] * tcomponents4 + this.components[6] * tcomponents5;
-        float components6 = this.components[0] * tcomponents6 + this.components[3] * tcomponents7 + this.components[6] * tcomponents8;
-        float components1 = this.components[1] * tcomponents0 + this.components[4] * tcomponents1 + this.components[7] * tcomponents2;
-        float components4 = this.components[1] * tcomponents3 + this.components[4] * tcomponents4 + this.components[7] * tcomponents5;
-        float components7 = this.components[1] * tcomponents6 + this.components[4] * tcomponents7 + this.components[7] * tcomponents8;
-        float components2 = this.components[2] * tcomponents0 + this.components[5] * tcomponents1 + this.components[8] * tcomponents2;
-        float components5 = this.components[2] * tcomponents3 + this.components[5] * tcomponents4 + this.components[8] * tcomponents5;
-        float components8 = this.components[2] * tcomponents6 + this.components[5] * tcomponents7 + this.components[8] * tcomponents8;
+        float components0 = this.field_20864[0] * tcomponents0 + this.field_20864[3] * tcomponents1 + this.field_20864[6] * tcomponents2;
+        float components3 = this.field_20864[0] * tcomponents3 + this.field_20864[3] * tcomponents4 + this.field_20864[6] * tcomponents5;
+        float components6 = this.field_20864[0] * tcomponents6 + this.field_20864[3] * tcomponents7 + this.field_20864[6] * tcomponents8;
+        float components1 = this.field_20864[1] * tcomponents0 + this.field_20864[4] * tcomponents1 + this.field_20864[7] * tcomponents2;
+        float components4 = this.field_20864[1] * tcomponents3 + this.field_20864[4] * tcomponents4 + this.field_20864[7] * tcomponents5;
+        float components7 = this.field_20864[1] * tcomponents6 + this.field_20864[4] * tcomponents7 + this.field_20864[7] * tcomponents8;
+        float components2 = this.field_20864[2] * tcomponents0 + this.field_20864[5] * tcomponents1 + this.field_20864[8] * tcomponents2;
+        float components5 = this.field_20864[2] * tcomponents3 + this.field_20864[5] * tcomponents4 + this.field_20864[8] * tcomponents5;
+        float components8 = this.field_20864[2] * tcomponents6 + this.field_20864[5] * tcomponents7 + this.field_20864[8] * tcomponents8;
 
-        this.components[0] = components0;
-        this.components[3] = components3;
-        this.components[6] = components6;
-        this.components[1] = components1;
-        this.components[4] = components4;
-        this.components[7] = components7;
-        this.components[2] = components2;
-        this.components[5] = components5;
-        this.components[8] = components8;
+        this.field_20864[0] = components0;
+        this.field_20864[3] = components3;
+        this.field_20864[6] = components6;
+        this.field_20864[1] = components1;
+        this.field_20864[4] = components4;
+        this.field_20864[7] = components7;
+        this.field_20864[2] = components2;
+        this.field_20864[5] = components5;
+        this.field_20864[8] = components8;
     }
 }

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import me.jellysquid.mods.sodium.client.util.collections.FixedLongHashTable;
+import net.minecraft.class_4548;
 import net.minecraft.client.world.ClientChunkManager;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.nbt.CompoundTag;
@@ -11,7 +12,6 @@ import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeArray;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.EmptyChunk;
@@ -98,7 +98,7 @@ public class SodiumChunkManager extends ClientChunkManager implements ChunkStatu
     }
 
     @Override
-    public WorldChunk loadChunkFromPacket(World world, int x, int z, BiomeArray biomes, PacketByteBuf buf, CompoundTag tag, int flag) {
+    public WorldChunk loadChunkFromPacket(World world, int x, int z, class_4548 biomes, PacketByteBuf buf, CompoundTag tag, int flag) {
         long key = createChunkKey(x, z);
 
         WorldChunk chunk = this.chunks.get(key);

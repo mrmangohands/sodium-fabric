@@ -1,18 +1,18 @@
 package me.jellysquid.mods.sodium.client.model.vertex;
 
-import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.class_4588;
 
 /**
  * A drain allows the instantiation of {@link VertexSink} and is implemented on outputs which take vertex data.
  */
 public interface VertexDrain {
     /**
-     * Returns a {@link VertexDrain} implementation on the provided {@link VertexConsumer}. Since the interface
-     * is always implemented on a given VertexConsumer, this is simply implemented as a cast internally.
-     * @param consumer The {@link VertexConsumer}
+     * Returns a {@link VertexDrain} implementation on the provided {@link class_4588}. Since the interface
+     * is always implemented on a given class_4588, this is simply implemented as a cast internally.
+     * @param consumer The {@link class_4588}
      * @return A {@link VertexDrain}
      */
-    static VertexDrain of(VertexConsumer consumer) {
+    static VertexDrain of(class_4588 consumer) {
         return (VertexDrain) consumer;
     }
 
