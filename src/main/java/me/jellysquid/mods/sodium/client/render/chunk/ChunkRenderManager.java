@@ -30,6 +30,7 @@ import me.jellysquid.mods.sodium.common.util.collections.FutureDequeDrain;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
@@ -83,11 +84,13 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
     private final boolean useChunkFaceCulling;
 
     private float cameraX, cameraY, cameraZ;
+    private Vector3f cameraVector;
     private boolean dirty;
 
     private int visibleChunkCount;
 
     private boolean useFogCulling;
+    private boolean usePlanarFog;
     private double fogRenderCutoff;
 
     public ChunkRenderManager(SodiumWorldRenderer renderer, ChunkRenderBackend<T> backend, BlockRenderPassManager renderPassManager, ClientWorld world, int renderDistance) {
@@ -124,6 +127,8 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         this.cameraY = (float) cameraPos.y;
         this.cameraZ = (float) cameraPos.z;
 
+        this.cameraVector = camera.getHorizontalPlane();
+
         this.useFogCulling = false;
 
         if (SodiumClientMod.options().advanced.useFogOcclusion) {
@@ -131,6 +136,9 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
 
             if (dist != 0.0f) {
                 this.useFogCulling = true;
+                if (SodiumClientMod.options().unofficial.usePlanarFog) {
+                    this.usePlanarFog = true;
+                }
                 this.fogRenderCutoff = Math.max(FOG_PLANE_MIN_DISTANCE, dist * dist);
             }
         }
@@ -156,8 +164,14 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
             }
         }
 
-        if (this.useFogCulling && render.getSquaredDistanceXZ(this.cameraX, this.cameraZ) >= this.fogRenderCutoff) {
-            return;
+        if (this.useFogCulling) {
+            if (this.usePlanarFog) {
+                if (render.getSquaredDepth(this.cameraX, this.cameraY, this.cameraZ, this.cameraVector) >= this.fogRenderCutoff) {
+                    return;
+                }
+            } else if (render.getSquaredDistance(this.cameraX, this.cameraY, this.cameraZ) >= this.fogRenderCutoff) {
+                return;
+            }
         }
 
         if (!render.isEmpty()) {
