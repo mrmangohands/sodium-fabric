@@ -1,5 +1,6 @@
 package me.jellysquid.mods.sodium.client.gl.compat;
 
+import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.render.chunk.shader.ChunkFogMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
@@ -41,12 +42,22 @@ public class LegacyFogHelper {
 
         int mode = GL20C.glGetInteger(GL20.GL_FOG_MODE);
 
+	boolean usePlanarFog = SodiumClientMod.options().unofficial.usePlanarFog;
+
         switch (mode) {
             case GL20.GL_EXP2:
             case GL20.GL_EXP:
-                return ChunkFogMode.EXP2;
+		if (usePlanarFog) {
+		    return ChunkFogMode.EXP2_PLANAR;
+		} else {
+                    return ChunkFogMode.EXP2;
+		}
             case GL20.GL_LINEAR:
-                return ChunkFogMode.LINEAR;
+		if (usePlanarFog) {
+                    return ChunkFogMode.LINEAR_PLANAR;
+		} else {
+                    return ChunkFogMode.LINEAR;
+		}
             default:
                 throw new UnsupportedOperationException("Unknown fog mode: " + mode);
         }

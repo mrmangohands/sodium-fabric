@@ -58,6 +58,8 @@ public abstract class ChunkRenderShaderBackend<T extends ChunkGraphicsState>
         this.programs.put(ChunkFogMode.NONE, this.createShader(device, ChunkFogMode.NONE, this.vertexFormat));
         this.programs.put(ChunkFogMode.LINEAR, this.createShader(device, ChunkFogMode.LINEAR, this.vertexFormat));
         this.programs.put(ChunkFogMode.EXP2, this.createShader(device, ChunkFogMode.EXP2, this.vertexFormat));
+        this.programs.put(ChunkFogMode.LINEAR_PLANAR, this.createShader(device, ChunkFogMode.LINEAR_PLANAR, this.vertexFormat));
+        this.programs.put(ChunkFogMode.EXP2_PLANAR, this.createShader(device, ChunkFogMode.EXP2_PLANAR, this.vertexFormat));
     }
 
     @Override
