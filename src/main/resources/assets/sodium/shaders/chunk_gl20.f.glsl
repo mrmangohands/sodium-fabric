@@ -17,7 +17,11 @@ uniform float u_FogDensity;
 
 // e^(-density * c^2)
 float getFogFactor() {
+#ifdef USE_FOG_PLANAR
+    float dist = gl_FragCoord.z / gl_FragCoord.w * u_FogDensity;
+#else
     float dist = v_FragDistance * u_FogDensity;
+#endif
     return 1.0 / exp2(dist * dist);
 }
 #endif
@@ -28,7 +32,11 @@ uniform float u_FogEnd;
 
 // (end - dist) / (end - start)
 float getFogFactor() {
+#ifdef USE_FOG_PLANAR
+    return (u_FogEnd - (gl_FragCoord.z / gl_FragCoord.w)) / u_FogLength;
+#else
     return (u_FogEnd - v_FragDistance) / u_FogLength;
+#endif
 }
 #endif
 

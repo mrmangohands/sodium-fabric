@@ -237,6 +237,7 @@ public class SodiumGameOptionPages {
 
     public static OptionPage advanced() {
         boolean disableBlacklist = SodiumClientMod.options().advanced.disableDriverBlacklist;
+        boolean usePlanarFog = SodiumClientMod.options().unofficial.usePlanarFog;
 
         List<OptionGroup> groups = new ArrayList<>();
 
@@ -342,5 +343,24 @@ public class SodiumGameOptionPages {
                 )
                 .build());
         return new OptionPage("Advanced", ImmutableList.copyOf(groups));
+    }
+
+    public static OptionPage unofficial() {
+        List<OptionGroup> groups = new ArrayList<>();
+
+        groups.add(OptionGroup.createBuilder()
+                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
+                        .setName("Use Planar Fog")
+                        .setTooltip("If enabled, planar fog will be used rather than radial. Fewer chunks will be hidden by fog, which may noticeably reduce performance " +
+                                "in areas with thick fog such as in the nether. This is vanilla behavior on systems where GL_NV_fog_distance is unavailable, but is not " +
+                                "considered desirable for any reason other than visibility. This option is not included in official releases of Sodium.")
+                        .setControl(TickBoxControl::new)
+                        .setBinding((opts, value) -> opts.unofficial.usePlanarFog = value, opts -> opts.unofficial.usePlanarFog)
+                        .setImpact(OptionImpact.MEDIUM)
+                        .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
+                        .build()
+                )
+                .build());
+        return new OptionPage("Unofficial", ImmutableList.copyOf(groups));
     }
 }
