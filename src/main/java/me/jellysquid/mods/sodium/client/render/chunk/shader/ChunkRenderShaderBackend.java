@@ -28,6 +28,8 @@ public abstract class ChunkRenderShaderBackend<T extends ChunkGraphicsState, P e
         this.programs.put(ChunkFogMode.NONE, this.createShader(ChunkFogMode.NONE, this.vertexFormat));
         this.programs.put(ChunkFogMode.LINEAR, this.createShader(ChunkFogMode.LINEAR, this.vertexFormat));
         this.programs.put(ChunkFogMode.EXP2, this.createShader(ChunkFogMode.EXP2, this.vertexFormat));
+        this.programs.put(ChunkFogMode.LINEAR_ZBUFFER, this.createShader(ChunkFogMode.LINEAR_ZBUFFER, this.vertexFormat));
+        this.programs.put(ChunkFogMode.EXP2_ZBUFFER, this.createShader(ChunkFogMode.EXP2_ZBUFFER, this.vertexFormat));
     }
 
     private P createShader(ChunkFogMode fogMode, GlVertexFormat<ChunkMeshAttribute> format) {

@@ -5,7 +5,7 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = "sodium-${project.minecraft_version}-backport-fabric"
+archivesBaseName = "sodium-${project.minecraft_version}-backport-z-buffer-fog-fabric"
 version = project.mod_version + "-SNAPSHOT"
 group = project.maven_group
 

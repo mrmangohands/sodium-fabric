@@ -276,6 +276,16 @@ public class SodiumGameOptionPages {
                         .build()
                 )
                 .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
+                        .setName("Use Z-Buffer Fog")
+                        .setTooltip("Looks and runs worse! Disables fog occlusion, but allows more chunks to be seen. " +
+                                "Mirrors vanilla behavior on systems where GL_NV_fog_distance is unavailable.")
+                        .setControl(TickBoxControl::new)
+                        .setBinding((opts, value) -> opts.advanced.useZBufferFog = value, opts -> opts.advanced.useZBufferFog)
+                        .setImpact(OptionImpact.MEDIUM)
+                        .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
+                        .build()
+                )
+                .add(OptionImpl.createBuilder(boolean.class, sodiumOpts)
                         .setName("Use Fog Occlusion")
                         .setTooltip("If enabled, chunks which are determined to be fully hidden by fog effects will be skipped during rendering. This " +
                                 "will generally provide a modest improvement to the number of chunks rendered each frame, especially " +
@@ -283,6 +293,7 @@ public class SodiumGameOptionPages {
                         .setControl(TickBoxControl::new)
                         .setBinding((opts, value) -> opts.advanced.useFogOcclusion = value, opts -> opts.advanced.useFogOcclusion)
                         .setImpact(OptionImpact.MEDIUM)
+                        .setEnabled(!sodiumOpts.getData().advanced.useZBufferFog)
                         .setFlags(OptionFlag.REQUIRES_RENDERER_RELOAD)
                         .build()
                 )

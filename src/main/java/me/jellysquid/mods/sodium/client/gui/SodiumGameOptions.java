@@ -33,6 +33,7 @@ public class SodiumGameOptions {
         public boolean animateOnlyVisibleTextures = true;
         public boolean useAdvancedEntityCulling = true;
         public boolean useParticleCulling = true;
+        public boolean useZBufferFog = false;
         public boolean useFogOcclusion = true;
         public boolean useCompactVertexFormat = true;
         public boolean useChunkFaceCulling = true;
