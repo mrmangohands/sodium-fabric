@@ -16,6 +16,7 @@
     "core.pipeline.MixinVertexConsumer",
     "features.block.MixinBlockModelRenderer",
     "features.block.MixinBufferBuilder",
+    "features.block.MixinClientWorld",
     "features.block.MixinWorldRenderer",
     "features.buffer_builder.fast_advance.MixinBufferBuilder",
     "features.buffer_builder.fast_sort.MixinBufferBuilder",

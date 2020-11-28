@@ -44,4 +44,8 @@ public class GlobalRenderContext {
             context.lightCache.clear();
         }
     }
+
+    public static void clear() {
+        INSTANCES.clear();
+    }
 }
