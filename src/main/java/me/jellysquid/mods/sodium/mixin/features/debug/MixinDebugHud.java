@@ -37,6 +37,7 @@ public abstract class MixinDebugHud {
 
         strings.add("");
         strings.addAll(getChunkRendererDebugStrings());
+        strings.add("MrMangoHands' Unofficial Sodium");
 
         if (SodiumClientMod.options().advanced.disableDriverBlacklist) {
             strings.add(Formatting.RED + "(!!) Driver blacklist ignored");
