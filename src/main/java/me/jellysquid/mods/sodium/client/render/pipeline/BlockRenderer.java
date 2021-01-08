@@ -4,13 +4,15 @@ import me.jellysquid.mods.sodium.client.model.light.LightMode;
 import me.jellysquid.mods.sodium.client.model.light.LightPipeline;
 import me.jellysquid.mods.sodium.client.model.light.LightPipelineProvider;
 import me.jellysquid.mods.sodium.client.model.light.data.QuadLightData;
+import me.jellysquid.mods.sodium.client.model.quad.ModelQuad;
 import me.jellysquid.mods.sodium.client.model.quad.ModelQuadView;
+import me.jellysquid.mods.sodium.client.model.quad.ModelQuadViewMutable;
 import me.jellysquid.mods.sodium.client.model.quad.blender.BiomeColorBlender;
 import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadFacing;
 import me.jellysquid.mods.sodium.client.model.quad.properties.ModelQuadOrientation;
-import me.jellysquid.mods.sodium.client.render.chunk.compile.buffers.ChunkModelBuffers;
-import me.jellysquid.mods.sodium.client.render.chunk.format.ModelVertexSink;
+import me.jellysquid.mods.sodium.client.model.quad.sink.ModelQuadSinkDelegate;
 import me.jellysquid.mods.sodium.client.render.occlusion.BlockOcclusionCache;
+import me.jellysquid.mods.sodium.client.util.ModelQuadUtil;
 import me.jellysquid.mods.sodium.client.util.color.ColorABGR;
 import me.jellysquid.mods.sodium.client.util.rand.XoRoShiRoRandom;
 import me.jellysquid.mods.sodium.client.world.biome.BlockColorsExtended;
@@ -34,6 +36,7 @@ public class BlockRenderer {
     private final BlockColorsExtended blockColors;
     private final BlockOcclusionCache occlusionCache;
 
+    private final ModelQuad cachedQuad = new ModelQuad();
     private final QuadLightData cachedQuadLightData = new QuadLightData();
 
     private final BiomeColorBlender biomeColorBlender;
@@ -51,7 +54,7 @@ public class BlockRenderer {
         this.useAmbientOcclusion = MinecraftClient.isAmbientOcclusionEnabled();
     }
 
-    public boolean renderModel(BlockRenderView world, BlockState state, BlockPos pos, BakedModel model, ChunkModelBuffers buffers, boolean cull, long seed) {
+    public boolean renderModel(BlockRenderView world, BlockState state, BlockPos pos, BakedModel model, ModelQuadSinkDelegate builder, boolean cull, long seed) {
         LightPipeline lighter = this.lighters.getLighter(this.getLightingMode(state, model));
         Vec3d offset = state.getModelOffset(world, pos);
 
@@ -67,7 +70,7 @@ public class BlockRenderer {
             }
 
             if (!cull || this.occlusionCache.shouldDrawSide(state, world, pos, dir)) {
-                this.renderQuadList(world, state, pos, lighter, offset, buffers, sided, ModelQuadFacing.fromDirection(dir));
+                this.renderQuadList(world, state, pos, lighter, offset, builder, sided, ModelQuadFacing.fromDirection(dir));
 
                 rendered = true;
             }
@@ -78,7 +81,7 @@ public class BlockRenderer {
         List<BakedQuad> all = model.getQuads(state, null, this.random);
 
         if (!all.isEmpty()) {
-            this.renderQuadList(world, state, pos, lighter, offset, buffers, all, ModelQuadFacing.UNASSIGNED);
+            this.renderQuadList(world, state, pos, lighter, offset, builder, all, ModelQuadFacing.UNASSIGNED);
 
             rendered = true;
         }
@@ -87,11 +90,8 @@ public class BlockRenderer {
     }
 
     private void renderQuadList(BlockRenderView world, BlockState state, BlockPos pos, LightPipeline lighter, Vec3d offset,
-                                ChunkModelBuffers buffers, List<BakedQuad> quads, ModelQuadFacing facing) {
+                                ModelQuadSinkDelegate builder, List<BakedQuad> quads, ModelQuadFacing facing) {
         BlockColorProvider colorizer = null;
-
-        ModelVertexSink sink = buffers.getSink(facing);
-        sink.ensureCapacity(quads.size() * 4);
 
         // This is a very hot allocation, iterate over it manually
         // noinspection ForLoopReplaceableByForEach
@@ -105,18 +105,18 @@ public class BlockRenderer {
                 colorizer = this.blockColors.getColorProvider(state);
             }
 
-            this.renderQuad(world, state, pos, sink, offset, colorizer, quad, light);
+            this.renderQuad(world, state, pos, builder, offset, colorizer, quad, light, facing);
         }
-
-        sink.flush();
     }
 
-    private void renderQuad(BlockRenderView world, BlockState state, BlockPos pos, ModelVertexSink sink, Vec3d offset,
-                            BlockColorProvider colorProvider, BakedQuad bakedQuad, QuadLightData light) {
+    private void renderQuad(BlockRenderView world, BlockState state, BlockPos pos, ModelQuadSinkDelegate consumer, Vec3d offset,
+                            BlockColorProvider colorProvider, BakedQuad bakedQuad, QuadLightData light, ModelQuadFacing facing) {
         ModelQuadView src = (ModelQuadView) bakedQuad;
 
         ModelQuadOrientation order = ModelQuadOrientation.orient(light.br);
+        ModelQuadViewMutable copy = this.cachedQuad;
 
+        int norm = ModelQuadUtil.getFacingNormal(bakedQuad.getFace());
         int[] colors = null;
 
         if (bakedQuad.hasColor()) {
@@ -126,19 +126,19 @@ public class BlockRenderer {
         for (int dstIndex = 0; dstIndex < 4; dstIndex++) {
             int srcIndex = order.getVertexIndex(dstIndex);
 
-            float x = src.getX(srcIndex) + (float) offset.getX();
-            float y = src.getY(srcIndex) + (float) offset.getY();
-            float z = src.getZ(srcIndex) + (float) offset.getZ();
-
-            int color = ColorABGR.mul(colors != null ? colors[srcIndex] : 0xFFFFFFFF, light.br[srcIndex]);
-
-            float u = src.getTexU(srcIndex);
-            float v = src.getTexV(srcIndex);
-
-            int lm = light.lm[srcIndex];
-
-            sink.writeQuad(x, y, z, color, u, v, lm);
+            copy.setX(dstIndex, src.getX(srcIndex) + (float) offset.getX());
+            copy.setY(dstIndex, src.getY(srcIndex) + (float) offset.getY());
+            copy.setZ(dstIndex, src.getZ(srcIndex) + (float) offset.getZ());
+            copy.setColor(dstIndex, ColorABGR.mul(colors != null ? colors[srcIndex] : 0xFFFFFFFF, light.br[srcIndex]));
+            copy.setTexU(dstIndex, src.getTexU(srcIndex));
+            copy.setTexV(dstIndex, src.getTexV(srcIndex));
+            copy.setLight(dstIndex, light.lm[srcIndex]);
+            copy.setNormal(dstIndex, norm);
+            copy.setSprite(src.getSprite());
         }
+
+        consumer.get(facing)
+                .write(copy);
     }
 
     private LightMode getLightingMode(BlockState state, BakedModel model) {

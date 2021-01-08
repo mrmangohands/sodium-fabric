@@ -100,6 +100,7 @@ public class GlVertexAttribute {
             return this;
         }
 
+
         /**
          * Creates a {@link GlVertexFormat} from the current builder.
          */

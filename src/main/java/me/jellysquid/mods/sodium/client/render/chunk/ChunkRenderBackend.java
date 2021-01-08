@@ -1,6 +1,7 @@
 package me.jellysquid.mods.sodium.client.render.chunk;
 
-import me.jellysquid.mods.sodium.client.model.vertex.type.ChunkVertexType;
+import me.jellysquid.mods.sodium.client.gl.SodiumVertexFormats.ChunkMeshAttribute;
+import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.render.chunk.compile.ChunkBuildResult;
 import me.jellysquid.mods.sodium.client.render.chunk.lists.ChunkRenderListIterator;
 import net.minecraft.client.util.math.MatrixStack;
@@ -42,7 +43,7 @@ public interface ChunkRenderBackend<T extends ChunkGraphicsState> {
     /**
      * Returns the vertex format used by this chunk render backend for rendering meshes.
      */
-    ChunkVertexType getVertexType();
+    GlVertexFormat<ChunkMeshAttribute> getVertexFormat();
 
     Class<T> getGraphicsStateType();
 

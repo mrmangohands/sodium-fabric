@@ -1,8 +1,9 @@
 package me.jellysquid.mods.sodium.client.render.chunk.backends.gl30;
 
+import me.jellysquid.mods.sodium.client.gl.SodiumVertexFormats;
+import me.jellysquid.mods.sodium.client.gl.attribute.GlVertexFormat;
 import me.jellysquid.mods.sodium.client.gl.func.GlFunctions;
 import me.jellysquid.mods.sodium.client.gl.util.MemoryTracker;
-import me.jellysquid.mods.sodium.client.model.vertex.type.ChunkVertexType;
 import me.jellysquid.mods.sodium.client.render.chunk.ChunkRenderContainer;
 import me.jellysquid.mods.sodium.client.render.chunk.oneshot.ChunkRenderBackendOneshot;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,8 +15,8 @@ import net.minecraft.client.util.math.MatrixStack;
  * allow the driver to skip validation logic that would otherwise be performed.
  */
 public class GL30ChunkRenderBackend extends ChunkRenderBackendOneshot<VAOGraphicsState> {
-    public GL30ChunkRenderBackend(ChunkVertexType vertexType) {
-        super(vertexType);
+    public GL30ChunkRenderBackend(GlVertexFormat<SodiumVertexFormats.ChunkMeshAttribute> format) {
+        super(format);
     }
 
     @Override

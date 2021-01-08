@@ -1,8 +1,7 @@
 package me.jellysquid.mods.sodium.client.model.vertex.buffer;
 
-import me.jellysquid.mods.sodium.client.gl.attribute.BufferVertexFormat;
 import me.jellysquid.mods.sodium.client.model.vertex.VertexSink;
-import me.jellysquid.mods.sodium.client.model.vertex.type.BufferVertexType;
+import net.minecraft.client.render.VertexFormat;
 
 /**
  * Base implementation of a {@link VertexSink} which writes into a {@link VertexBufferView} directly.
@@ -10,16 +9,21 @@ import me.jellysquid.mods.sodium.client.model.vertex.type.BufferVertexType;
 public abstract class VertexBufferWriter implements VertexSink {
     protected final VertexBufferView backingBuffer;
 
-    protected final BufferVertexFormat vertexFormat;
+    protected final VertexFormat vertexFormat;
     protected final int vertexStride;
 
     private int vertexCount;
 
-    protected VertexBufferWriter(VertexBufferView backingBuffer, BufferVertexType<?> vertexType) {
+    protected VertexBufferWriter(VertexBufferView backingBuffer, VertexFormat vertexFormat) {
+        if (backingBuffer.getVertexFormat() != vertexFormat) {
+            throw new IllegalArgumentException("Backing buffer is using vertex format [" + backingBuffer.getVertexFormat() +
+                    "] but this writer requires [" + vertexFormat + "]");
+        }
+
         this.backingBuffer = backingBuffer;
 
-        this.vertexFormat = vertexType.getBufferVertexFormat();
-        this.vertexStride = this.vertexFormat.getStride();
+        this.vertexFormat = vertexFormat;
+        this.vertexStride = vertexFormat.getVertexSize();
 
         this.onBufferStorageChanged();
     }

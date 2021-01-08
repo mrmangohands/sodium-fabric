@@ -95,7 +95,7 @@ public class ChunkRenderManager<T extends ChunkGraphicsState> implements ChunkSt
         this.renderer = renderer;
         this.world = world;
 
-        this.builder = new ChunkBuilder<>(backend.getVertexType(), this.backend);
+        this.builder = new ChunkBuilder<>(backend.getVertexFormat(), this.backend);
         this.builder.init(world, renderPassManager);
 
         this.dirty = true;
