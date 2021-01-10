@@ -1,5 +1,6 @@
 package me.jellysquid.mods.sodium.client.render.chunk.shader;
 
+import me.jellysquid.mods.sodium.client.SodiumClientMod;
 import me.jellysquid.mods.sodium.client.gl.shader.GlProgram;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -17,6 +18,8 @@ import java.util.function.Function;
 public abstract class ChunkProgram extends GlProgram {
     // The model size of a chunk (16^3)
     protected static final float MODEL_SIZE = 32.0f;
+
+    protected static final float CVF_MODEL_SIZE = (32.0f / 65536.0f);
 
     // Uniform variable binding indexes
     private final int uModelViewProjectionMatrix;
@@ -42,7 +45,12 @@ public abstract class ChunkProgram extends GlProgram {
     public void setup(MatrixStack matrixStack) {
         GL20.glUniform1i(this.uBlockTex, 0);
         GL20.glUniform1i(this.uLightTex, 2);
-        GL20.glUniform3f(this.uModelScale, MODEL_SIZE, MODEL_SIZE, MODEL_SIZE);
+
+        if (SodiumClientMod.options().advanced.useCompactVertexFormat) {
+            GL20.glUniform3f(this.uModelScale, CVF_MODEL_SIZE, CVF_MODEL_SIZE, CVF_MODEL_SIZE);
+        } else {
+            GL20.glUniform3f(this.uModelScale, MODEL_SIZE, MODEL_SIZE, MODEL_SIZE);
+        }
 
         this.fogShader.setup();
 

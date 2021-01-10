@@ -25,7 +25,7 @@ public class SodiumVertexFormats {
      * their centering offset), as the
      */
     public static final GlVertexFormat<ChunkMeshAttribute> CHUNK_MESH_COMPACT = GlVertexAttribute.builder(ChunkMeshAttribute.class, 20)
-            .addElement(ChunkMeshAttribute.POSITION, 0, GlVertexAttributeFormat.UNSIGNED_SHORT, 3, true)
+            .addElement(ChunkMeshAttribute.POSITION, 0, GlVertexAttributeFormat.UNSIGNED_SHORT, 3, false)
             .addElement(ChunkMeshAttribute.COLOR, 8, GlVertexAttributeFormat.UNSIGNED_BYTE, 4, true)
             .addElement(ChunkMeshAttribute.TEXTURE, 12, GlVertexAttributeFormat.UNSIGNED_SHORT, 2, true)
             .addElement(ChunkMeshAttribute.LIGHT, 16, GlVertexAttributeFormat.UNSIGNED_SHORT, 2, true)
@@ -50,9 +50,9 @@ public class SodiumVertexFormats {
 
         registerEncoder(CHUNK_MESH_COMPACT, (quad, buffer, position) -> {
             for (int i = 0; i < 4; i++) {
-                buffer.putShort(position, denormalizeFloatAsShort(quad.getX(i)));
-                buffer.putShort(position + 2, denormalizeFloatAsShort(quad.getY(i)));
-                buffer.putShort(position + 4, denormalizeFloatAsShort(quad.getZ(i)));
+                buffer.putShort(position, denormalizeVertexFloatAsShort(quad.getX(i)));
+                buffer.putShort(position + 2, denormalizeVertexFloatAsShort(quad.getY(i)));
+                buffer.putShort(position + 4, denormalizeVertexFloatAsShort(quad.getZ(i)));
                 buffer.putInt(position + 8, quad.getColor(i));
                 buffer.putShort(position + 12, denormalizeFloatAsShort(quad.getTexU(i)));
                 buffer.putShort(position + 14, denormalizeFloatAsShort(quad.getTexV(i)));
@@ -94,7 +94,11 @@ public class SodiumVertexFormats {
      * @return The resulting de-normalized unsigned short
      */
     private static short denormalizeFloatAsShort(float value) {
-        return (short) (value * 65535.0f);
+        return (short) ((value * 65535.0f) + 0.5F);
+    }
+
+    public static short denormalizeVertexFloatAsShort(float value) {
+        return (short) ((value * 65536.0f) + 0.5F);
     }
 
     /**
